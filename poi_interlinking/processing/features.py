@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Author: vkaff
 # E-mail: vkaffes@imis.athena-innovation.gr
-from numpy.core._multiarray_umath import dtype
+
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
@@ -83,6 +83,11 @@ class Features:
         print('Extracting street numbers from addresses...')
         self.data_df = self.data_df.progress_apply(self.split_address, axis=1, result_type='expand')
 
+        print('Compute arithmetic features...')
+        fX0 = self.data_df.progress_apply(
+            lambda x: self.arithmetic_features(x['str_no1'], x['str_no2']), axis=1).to_numpy()
+        fX0 = preprocessing.MinMaxScaler().fit_transform(fX0[:, np.newaxis])
+
         fX = None
         print(f'Computing features of the {self.clf_method.lower()} group...')
         if self.clf_method.lower() == 'basic':
@@ -132,7 +137,7 @@ class Features:
                 total=len(self.data_df.index)
             )), dtype=float)
         fX3 = preprocessing.MinMaxScaler().fit_transform(fX3)
-        fX = np.concatenate((fX, fX3), axis=1)
+        fX = np.concatenate((fX, fX0, fX3), axis=1)
 
         return fX, y
 
@@ -249,3 +254,9 @@ class Features:
             row[f'str_no{s}'] = ','.join(map(str, strno))
 
         return row
+
+    def arithmetic_features(self, no1, no2):
+        lno1 = map(int, no1.split(',')) if no1 else [0]
+        lno2 = map(int, no2.split(',')) if no2 else [0]
+
+        return min([abs(a - b) for a in lno1 for b in lno2])
