@@ -172,10 +172,14 @@ class ParamTuning:
         """
         y_pred = model.predict(X_test)
 
+        metrics = dict()
         # acc = accuracy_score(y_test, y_pred)
-        acc = balanced_accuracy_score(y_test, y_pred)
-        pre = precision_score(y_test, y_pred, average='weighted')
-        rec = recall_score(y_test, y_pred, average='weighted')
-        f1 = f1_score(y_test, y_pred, average='weighted')
+        metrics['accuracy'] = balanced_accuracy_score(y_test, y_pred)
+        metrics['precision'] = precision_score(y_test, y_pred)
+        metrics['precision_weighted'] = precision_score(y_test, y_pred, average='weighted')
+        metrics['recall'] = recall_score(y_test, y_pred)
+        metrics['recall_weighted'] = recall_score(y_test, y_pred, average='weighted')
+        metrics['f1_score'] = f1_score(y_test, y_pred)
+        metrics['f1_score_weighted'] = f1_score(y_test, y_pred, average='weighted')
 
-        return acc, pre, rec, f1
+        return metrics

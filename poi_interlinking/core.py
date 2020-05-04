@@ -63,9 +63,10 @@ class StrategyEvaluator:
 
         start_time = time.time()
         # 3th phase: test the fine tuned best classifier on the test dataset
-        acc, pre, rec, f1 = pt.testClassifier(fX, y, estimator)
+        metrics = pt.testClassifier(fX, y, estimator)
         self._print_stats({
-            'classifier': best_clf['classifier'], 'accuracy': acc, 'precision': pre, 'recall': rec, 'f1_score': f1,
+            'classifier': best_clf['classifier'],
+            **metrics,
             'time': start_time
         })
 
@@ -103,9 +104,10 @@ class StrategyEvaluator:
 
             start_time = time.time()
             # 2nd phase: test each classifier on the test dataset
-            acc, pre, rec, f1 = pt.testClassifier(fX_test, y_test, estimator)
+            metrics = pt.testClassifier(fX_test, y_test, estimator)
             self._print_stats({
-                'classifier': clf, 'accuracy': acc, 'precision': pre, 'recall': rec, 'f1_score': f1,
+                'classifier': clf,
+                **metrics,
                 'time': start_time
             })
 
@@ -113,9 +115,14 @@ class StrategyEvaluator:
 
     @staticmethod
     def _print_stats(params):
-        print("| Method\t\t& Accuracy\t& Precision\t& Recall\t& F1-Score\t& Time (sec)")
-        print("||{0}\t& {1}\t& {2}\t& {3}\t& {4}\t& {5}".format(
-            params['classifier'], params['accuracy'], params['precision'], params['recall'], params['f1_score'],
+        print("| Method\t& Accuracy\t& Precision\t& Prec-weighted\t& Recall\t& Rec-weighted"
+              "\t& F1-Score\t& F1-weighted\t& Time (sec)")
+        print("||{}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}".format(
+            params['classifier'],
+            params['accuracy'],
+            params['precision'], params['precision_weighted'],
+            params['recall'], params['recall_weighted'],
+            params['f1_score'], params['f1_score_weighted'],
             time.time() - params['time']))
 
         # if params['feature_importances'] is not None:
