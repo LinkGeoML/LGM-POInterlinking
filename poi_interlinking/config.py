@@ -70,7 +70,7 @@ class MLConf:
 
     n_jobs = 4  #: int: Number of parallel jobs to be initiated. -1 means to utilize all available processors.
 
-    classification_method = 'basic'
+    classification_method = 'lgm'
     """str: The classification group of features to use. (*basic* | *basic_sorted* | *lgm*).
 
     See Also
