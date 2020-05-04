@@ -10,7 +10,7 @@ from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
 from xgboost import XGBClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, balanced_accuracy_score
 from sklearn.model_selection import StratifiedKFold
 
 
@@ -172,9 +172,10 @@ class ParamTuning:
         """
         y_pred = model.predict(X_test)
 
-        acc = accuracy_score(y_test, y_pred)
-        pre = precision_score(y_test, y_pred)
-        rec = recall_score(y_test, y_pred)
-        f1 = f1_score(y_test, y_pred)
+        # acc = accuracy_score(y_test, y_pred)
+        acc = balanced_accuracy_score(y_test, y_pred)
+        pre = precision_score(y_test, y_pred, average='weighted')
+        rec = recall_score(y_test, y_pred, average='weighted')
+        f1 = f1_score(y_test, y_pred, average='weighted')
 
         return acc, pre, rec, f1

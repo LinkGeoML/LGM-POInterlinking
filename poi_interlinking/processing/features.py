@@ -255,7 +255,8 @@ class Features:
 
         return row
 
-    def arithmetic_features(self, no1, no2):
+    @staticmethod
+    def arithmetic_features(no1, no2):
         lno1 = map(int, no1.split(',')) if no1 else [0]
         lno2 = map(int, no2.split(',')) if no2 else [0]
 
