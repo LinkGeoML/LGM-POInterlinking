@@ -1,2 +1,2 @@
 # POI-Interlinking
-Performing spatial interlinking
+Performing spatial-textual interlinking

@@ -26,8 +26,9 @@ def download(bbox):
                    'It requires once to run: python -m nltk.downloader \'punkt\'')
 @click.option('--encoding', default='latin', type=click.Choice(['latin', 'global']),
               help='specify the alphabet encoding of toponyms in dataset.')
-def freq_terms(train_set, encoding):
-    ft.extract_freqterms(train_set, encoding)
+@click.option('--exp_path', help='Prefix to be used in naming the file with the extracted frequent terms.')
+def freq_terms(train_set, encoding, exp_path):
+    ft.extract_freqterms(train_set, encoding, exp_path)
 
 
 @cli.command('learn_sim_params', help='learn parameters, i.e., weights/thresholds, on a train dataset for '
@@ -56,12 +57,11 @@ def hyperparams_learn(train_set, test_set, encoding):
 
 
 @cli.command('evaluate', help='')
-@click.option('--train_set', default='', help='the dataset to train the models.')
-@click.option('--test_set', default='dataset-string-similarity.txt', help='the dataset to apply/evaluate trained models.')
+@click.option('--data_set', default='', help='the dataset to train/evaluate the models.')
 @click.option('--encoding', default='latin', type=click.Choice(['latin', 'global']),
               help='Specify the encoding of toponyms in dataset.')
-def eval_classifiers(train_set, test_set, encoding):
-    core.StrategyEvaluator(encoding).evaluate(train_set, test_set)
+def eval_classifiers(data_set, encoding):
+    core.StrategyEvaluator(encoding).evaluate(data_set)
 
 
 cli.add_command(download)

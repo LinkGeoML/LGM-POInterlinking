@@ -4,6 +4,7 @@
 
 import time
 import os
+from sklearn.model_selection import train_test_split
 
 from poi_interlinking import config
 from poi_interlinking.learning import hyperparam_tuning
@@ -70,28 +71,24 @@ class StrategyEvaluator:
 
         print("The whole process took {} sec.".format(time.time() - tot_time))
 
-    def evaluate(self, train_data, test_data):
+    def evaluate(self, dataset):
         """Train and evaluate selected ML algorithms with custom hyper-parameters on dataset.
         """
         LGMSimVars.per_metric_optValues = StaticValues.opt_values[self.encoding.lower()]
-        assert (os.path.isfile(os.path.join(config.default_data_path, train_data))), \
-            f'{train_data} dataset does not exist'
-        assert (os.path.isfile(os.path.join(config.default_data_path, test_data))), \
-            f'{test_data} dataset does not exist'
+        assert (os.path.isfile(os.path.join(config.default_data_path, dataset))), \
+            f'{os.path.join(config.default_data_path, dataset)} dataset does not exist!!!'
 
         f = Features()
         pt = hyperparam_tuning.ParamTuning()
 
         start_time = time.time()
-        f.load_data(os.path.join(config.default_data_path, train_data), self.encoding)
-        fX_train, y_train = f.build()
-        print("Loaded train dataset and build features for {} setup; {} sec.".format(
+        f.load_data(os.path.join(config.default_data_path, dataset), self.encoding)
+        fX, y = f.build()
+        print("Loaded dataset and build features for {} setup; {} sec.".format(
             config.MLConf.classification_method, time.time() - start_time))
 
-        start_time = time.time()
-        f.load_data(os.path.join(config.default_data_path, test_data), self.encoding)
-        fX_test, y_test = f.build()
-        print("Loaded test dataset and build features; {} sec".format(time.time() - start_time))
+        fX_train, fX_test, y_train, y_test = train_test_split(
+            fX, y, stratify=y, test_size=0.2, random_state=config.seed_no)
 
         for clf in config.MLConf.clf_custom_params:
             print('Method {}'.format(clf))

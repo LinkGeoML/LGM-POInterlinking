@@ -1,6 +1,6 @@
 from ast import literal_eval
 import pandas as pd
-from shapely.geometry import shape
+from shapely.geometry import shape, Point
 from rtree import index
 
 
@@ -126,3 +126,7 @@ def get_poi_poly_matches(poi_gdf, poly_gdf, idx, strategy):
     #      3: ['nearby', ['named', 20000], ['lgm_sim_jw', 0.5, 50]],
     #      4: ['nearby', ['unnamed', 10000], [None, None, 50]]}
     # ]
+
+
+def get_distance(lon1, lat1, lon2, lat2):
+    return [Point(lon1, lat1).distance(Point(lon2, lat2))]

@@ -7,7 +7,7 @@ import re
 from poi_interlinking import config, helpers
 
 
-def extract_freqterms(fname, encoding):
+def extract_freqterms(fname, encoding, exp_path):
     pattern = re.compile("^[a-zA-Z]+")
 
     ngram_stats = {
@@ -54,7 +54,7 @@ def extract_freqterms(fname, encoding):
                 #         ngram_stats['4gram'][gram] += 1
 
     for gram in ngram_stats.keys():
-        with open(os.path.join(config.default_data_path, "{0}s_{1}.csv".format(gram, encoding)), "w+") as f:
+        with open(os.path.join(config.default_data_path, "{}{}s_{}.csv".format(exp_path, gram, encoding)), "w+") as f:
             f.write('gram\tcount\n')
             for value, count in ngram_stats[gram].most_common():
                 for t in dstemmed.get(value):

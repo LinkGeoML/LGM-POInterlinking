@@ -1,16 +1,20 @@
 # -*- coding: utf-8 -*-
 # Author: vkaff
 # E-mail: vkaffes@imis.athena-innovation.gr
-
+from numpy.core._multiarray_umath import dtype
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
-from poi_interlinking import config
+import re
 
+from poi_interlinking import config
 from poi_interlinking.helpers import transform, StaticValues
 from poi_interlinking.processing import sim_measures
+from poi_interlinking.processing.spatial.matching import get_distance
+from sklearn import preprocessing
 
 tqdm.pandas()
+no_match = re.compile(r'\b\d+[a-zA-Z]?(-\d+[a-zA-Z]?)?\s*')
 
 
 class Features:
@@ -40,6 +44,8 @@ class Features:
 
     dtypes = {
         's1': str, 's2': str,
+        'addr1': str, 'addr2': str,
+        'lon1': float, 'lon2': float, 'lat1': float, 'lat2': float,
         'status': str,
         # 'gid1': np.int32, 'gid2': np.int32,
         # 'alphabet1': str, 'alphabet2': str,
@@ -56,7 +62,7 @@ class Features:
         self.data_df = None
 
     def load_data(self, fname, encoding):
-        self.data_df = pd.read_csv(fname, sep=config.delimiter, names=config.fieldnames,
+        self.data_df = pd.read_csv(fname, sep=config.delimiter, names=config.fieldnames, dtype=self.dtypes,
                                    usecols=config.use_cols.values(), na_filter=False, encoding='utf8')
         sim_measures.LGMSimVars().load_freq_terms(encoding)
 
@@ -74,26 +80,59 @@ class Features:
         # y = self.data_df[config.use_cols['status']].str.upper().map(self.d).values
         y = self.data_df[config.use_cols['status']].values
 
+        print('Extracting street numbers from addresses...')
+        self.data_df = self.data_df.progress_apply(self.split_address, axis=1, result_type='expand')
+
         fX = None
+        print(f'Computing features of the {self.clf_method.lower()} group...')
         if self.clf_method.lower() == 'basic':
-            fX = np.asarray(list(tqdm(
+            fX1 = np.asarray(list(tqdm(
                 map(self._compute_basic_features,
                     self.data_df[config.use_cols['s1']],
                     self.data_df[config.use_cols['s2']]),
                 total=len(self.data_df.index)
             )), dtype=float)
+            fX2 = np.asarray(list(tqdm(
+                map(self._compute_basic_features, self.data_df['str_name1'], self.data_df['str_name2']),
+                total=len(self.data_df.index)
+            )), dtype=float)
+
+            fX = np.concatenate((fX1, fX2), axis=1)
         elif self.clf_method.lower() == 'basic_sorted':
-            fX = np.asarray(list(tqdm(
+            fX1 = list(tqdm(
                 map(self._compute_sorted_features,
                     self.data_df[config.use_cols['s1']],
                     self.data_df[config.use_cols['s2']]),
                 total=len(self.data_df.index)
-            )), dtype=float)
+            ))
+            fX2 = list(tqdm(
+                map(self._compute_sorted_features, self.data_df['str_name1'], self.data_df['str_name2']),
+                total=len(self.data_df.index)
+            ))
+
+            fX = np.concatenate((fX1, fX2), axis=1)
         else:  # lgm
-            fX = np.asarray(list(tqdm(
+            fX1 = list(tqdm(
                 map(self.compute_features, self.data_df[config.use_cols['s1']], self.data_df[config.use_cols['s2']]),
                 total=len(self.data_df.index)
+            ))
+            fX2 = list(tqdm(
+                map(self.compute_features, self.data_df['str_name1'], self.data_df['str_name2']),
+                total=len(self.data_df.index)
+            ))
+
+            fX = np.concatenate((fX1, fX2), axis=1)
+
+        print('Computing spatial features...')
+        # spatial features
+        fX3 = np.asarray(list(tqdm(
+                map(get_distance,
+                    self.data_df[config.use_cols['lon1']], self.data_df[config.use_cols['lat1']],
+                    self.data_df[config.use_cols['lon2']], self.data_df[config.use_cols['lat2']]),
+                total=len(self.data_df.index)
             )), dtype=float)
+        fX3 = preprocessing.MinMaxScaler().fit_transform(fX3)
+        fX = np.concatenate((fX, fX3), axis=1)
 
         return fX, y
 
@@ -192,3 +231,21 @@ class Features:
         base_t, mis_t, special_t = sim_measures.lgm_sim_split(
             s1, s2, sim_measures.LGMSimVars.per_metric_optValues[metric][w_type][0])
         return sim_measures.score_per_term(base_t, mis_t, special_t, metric)
+
+    @staticmethod
+    def split_address(row):
+        for s in ['1', '2']:
+            row[f'str_name{s}'] = re.sub(no_match, '', row[f'Address{s}']).strip()
+
+            strno = re.findall(r'\b\d+', row[f'Address{s}'])
+            strno = list(map(int, strno))
+
+            if len(strno) > 1:
+                max_no = max(strno)
+                strno.remove(max_no)
+
+                row[f'str_name{s}'] += ' ' + str(max_no)
+
+            row[f'str_no{s}'] = ','.join(map(str, strno))
+
+        return row
