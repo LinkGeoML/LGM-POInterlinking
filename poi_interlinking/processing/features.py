@@ -6,12 +6,12 @@ from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import re
+from sklearn import preprocessing
 
 from poi_interlinking import config
 from poi_interlinking.helpers import transform, StaticValues
 from poi_interlinking.processing import sim_measures
-from poi_interlinking.processing.spatial.matching import get_distance
-from sklearn import preprocessing
+from poi_interlinking.processing.spatial.matching import get_distance, Projection
 
 tqdm.pandas()
 no_match = re.compile(r'\b\d+[a-zA-Z]?(-\d+[a-zA-Z]?)?\s*')
@@ -86,7 +86,6 @@ class Features:
         print('Compute arithmetic features...')
         fX0 = self.data_df.progress_apply(
             lambda x: self.arithmetic_features(x['str_no1'], x['str_no2']), axis=1).to_numpy()
-        fX0 = preprocessing.MinMaxScaler().fit_transform(fX0[:, np.newaxis])
 
         fX = None
         print(f'Computing features of the {self.clf_method.lower()} group...')
@@ -101,8 +100,6 @@ class Features:
                 map(self._compute_basic_features, self.data_df['str_name1'], self.data_df['str_name2']),
                 total=len(self.data_df.index)
             )), dtype=float)
-
-            fX = np.concatenate((fX1, fX2), axis=1)
         elif self.clf_method.lower() == 'basic_sorted':
             fX1 = list(tqdm(
                 map(self._compute_sorted_features,
@@ -114,8 +111,6 @@ class Features:
                 map(self._compute_sorted_features, self.data_df['str_name1'], self.data_df['str_name2']),
                 total=len(self.data_df.index)
             ))
-
-            fX = np.concatenate((fX1, fX2), axis=1)
         else:  # lgm
             fX1 = list(tqdm(
                 map(self.compute_features, self.data_df[config.use_cols['s1']], self.data_df[config.use_cols['s2']]),
@@ -126,18 +121,33 @@ class Features:
                 total=len(self.data_df.index)
             ))
 
-            fX = np.concatenate((fX1, fX2), axis=1)
-
         print('Computing spatial features...')
+        print(self.data_df.columns)
         # spatial features
+        print('Changing projection of coordinates to epsg:3857...')
+        proj = Projection()
+        self.data_df['p1'] = self.data_df.progress_apply(
+            lambda x: proj.change_projection(x[config.use_cols['lon1']], x[config.use_cols['lat1']]), axis=1)
+        self.data_df['p2'] = self.data_df.progress_apply(
+            lambda x: proj.change_projection(x[config.use_cols['lon2']], x[config.use_cols['lat2']]), axis=1)
+        # fX3 = np.asarray(list(tqdm(
+        #         map(get_distance,
+        #             self.data_df[config.use_cols['lon1']], self.data_df[config.use_cols['lat1']],
+        #             self.data_df[config.use_cols['lon2']], self.data_df[config.use_cols['lat2']]),
+        #         total=len(self.data_df.index)
+        #     )), dtype=float)
         fX3 = np.asarray(list(tqdm(
                 map(get_distance,
-                    self.data_df[config.use_cols['lon1']], self.data_df[config.use_cols['lat1']],
-                    self.data_df[config.use_cols['lon2']], self.data_df[config.use_cols['lat2']]),
+                    self.data_df['p1'],
+                    self.data_df['p2']),
                 total=len(self.data_df.index)
             )), dtype=float)
+
+        # normalize values
+        fX0 = preprocessing.MinMaxScaler().fit_transform(fX0[:, np.newaxis])
         fX3 = preprocessing.MinMaxScaler().fit_transform(fX3)
-        fX = np.concatenate((fX, fX0, fX3), axis=1)
+
+        fX = np.concatenate((fX0, fX1, fX2, fX3), axis=1)
 
         return fX, y
 
@@ -242,16 +252,15 @@ class Features:
         for s in ['1', '2']:
             row[f'str_name{s}'] = re.sub(no_match, '', row[f'Address{s}']).strip()
 
-            strno = re.findall(r'\b\d+', row[f'Address{s}'])
-            strno = list(map(int, strno))
+            strno_str = re.findall(r'\b\d+', row[f'Address{s}'])
+            strno = list(map(int, strno_str))
 
             if len(strno) > 1:
                 max_no = max(strno)
                 strno.remove(max_no)
+                # row[f'str_name{s}'] += ' ' + str(max_no)
 
-                row[f'str_name{s}'] += ' ' + str(max_no)
-
-            row[f'str_no{s}'] = ','.join(map(str, strno))
+            row[f'str_no{s}'] = ','.join(strno_str)
 
         return row
 

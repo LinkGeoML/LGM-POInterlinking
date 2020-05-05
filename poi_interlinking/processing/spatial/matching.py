@@ -1,7 +1,9 @@
 from ast import literal_eval
 import pandas as pd
 from shapely.geometry import shape, Point
+from shapely.ops import transform
 from rtree import index
+import pyproj
 
 
 def create_index(poly_gdf):
@@ -128,11 +130,27 @@ def get_poi_poly_matches(poi_gdf, poly_gdf, idx, strategy):
     # ]
 
 
-def get_distance(lon1, lat1, lon2, lat2):
+def get_distance(p1, p2):
     dist = 5000
     try:
-        dist = Point(lon1, lat1).distance(Point(lon2, lat2))
+        dist = min(dist, p1.distance(p2))
     except TypeError as err:
-        print(f'{err} for (lon1, lat1) & (lon2, lat2)')
+        print(f'{err}')
 
     return [dist]
+
+
+class Projection:
+    def __init__(self, src='4326', dest='3857'):
+        self.project = pyproj.Transformer.from_proj(
+            pyproj.Proj(f'epsg:{src}'),  # source coordinate system
+            pyproj.Proj(f'epsg:{dest}'))  # destination coordinate system
+
+    def change_projection(self, lon, lat):
+        p = Point(0, 0)
+        try:
+            p = transform(self.project.transform, Point(lon, lat))
+        except TypeError as err:
+            print(f'{err} for ({lon}, {lat})')
+
+        return p
