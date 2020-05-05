@@ -117,7 +117,7 @@ class StrategyEvaluator:
     def _print_stats(params):
         print("| Method\t& Accuracy\t& Precision\t& Prec-weighted\t& Recall\t& Rec-weighted"
               "\t& F1-Score\t& F1-weighted\t& Time (sec)")
-        print("||{}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}".format(
+        print("||{}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}".format(
             params['classifier'],
             params['accuracy'],
             params['precision'], params['precision_weighted'],
