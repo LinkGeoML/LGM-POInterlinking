@@ -10,9 +10,11 @@ freq_term_size = 400
 
 # fieldnames = ["s1", "s2", "status", "c1", "c2", "a1", "a2", "cc1", "cc2"]
 fieldnames = None
-use_cols = dict(s1='Name1', s2='Name2', addr1='Address1', addr2='Address2',
-                lon1='st_x1', lat1='st_y1', lon2='st_x2', lat2='st_y2',
-                status='Class')
+use_cols = dict(
+    s1='Name1', s2='Name2', addr1='Address1', addr2='Address2',
+    lon1='st_x1', lat1='st_y1', lon2='st_x2', lat2='st_y2',
+    status='Class'
+)
 delimiter = ','
 
 # #: Relative path to the train dataset. This value is used only when the *dtrain* cmd argument is None.

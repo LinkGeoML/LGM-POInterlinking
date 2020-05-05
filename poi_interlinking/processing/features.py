@@ -43,10 +43,11 @@ class Features:
     # ]
 
     dtypes = {
-        's1': str, 's2': str,
-        'addr1': str, 'addr2': str,
-        'lon1': float, 'lon2': float, 'lat1': float, 'lat2': float,
-        'status': str,
+        config.use_cols['s1']: str, config.use_cols['s2']: str,
+        config.use_cols['addr1']: str, config.use_cols['addr2']: str,
+        config.use_cols['lon1']: float, config.use_cols['lon2']: float,
+        config.use_cols['lat1']: float, config.use_cols['lat2']: float,
+        config.use_cols['status']: bool,
         # 'gid1': np.int32, 'gid2': np.int32,
         # 'alphabet1': str, 'alphabet2': str,
         # 'alpha2_cc1': str, 'alpha2_cc2': str
@@ -62,7 +63,8 @@ class Features:
         self.data_df = None
 
     def load_data(self, fname, encoding):
-        self.data_df = pd.read_csv(fname, sep=config.delimiter, names=config.fieldnames, dtype=self.dtypes,
+        self.data_df = pd.read_csv(fname, sep=config.delimiter, names=config.fieldnames,
+                                   # dtype=self.dtypes,
                                    usecols=config.use_cols.values(), na_filter=False, encoding='utf8')
         sim_measures.LGMSimVars().load_freq_terms(encoding)
 
@@ -121,21 +123,15 @@ class Features:
                 total=len(self.data_df.index)
             ))
 
-        print('Computing spatial features...')
-        print(self.data_df.columns)
         # spatial features
+        print('Computing spatial features...')
         print('Changing projection of coordinates to epsg:3857...')
         proj = Projection()
         self.data_df['p1'] = self.data_df.progress_apply(
             lambda x: proj.change_projection(x[config.use_cols['lon1']], x[config.use_cols['lat1']]), axis=1)
         self.data_df['p2'] = self.data_df.progress_apply(
             lambda x: proj.change_projection(x[config.use_cols['lon2']], x[config.use_cols['lat2']]), axis=1)
-        # fX3 = np.asarray(list(tqdm(
-        #         map(get_distance,
-        #             self.data_df[config.use_cols['lon1']], self.data_df[config.use_cols['lat1']],
-        #             self.data_df[config.use_cols['lon2']], self.data_df[config.use_cols['lat2']]),
-        #         total=len(self.data_df.index)
-        #     )), dtype=float)
+
         fX3 = np.asarray(list(tqdm(
                 map(get_distance,
                     self.data_df['p1'],
