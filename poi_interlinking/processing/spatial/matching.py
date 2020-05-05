@@ -129,4 +129,10 @@ def get_poi_poly_matches(poi_gdf, poly_gdf, idx, strategy):
 
 
 def get_distance(lon1, lat1, lon2, lat2):
-    return [Point(lon1, lat1).distance(Point(lon2, lat2))]
+    dist = 5000
+    try:
+        dist = Point(lon1, lat1).distance(Point(lon2, lat2))
+    except TypeError as err:
+        print(f'{err} for (lon1, lat1) & (lon2, lat2)')
+
+    return [dist]
