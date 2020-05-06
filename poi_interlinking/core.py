@@ -29,6 +29,8 @@ class StrategyEvaluator:
         :param test_data: Relative path to the test dataset.
         :type test_data: str
         """
+        tot_time = time.time()
+
         LGMSimVars.per_metric_optValues = StaticValues.opt_values[self.encoding.lower()]
         assert (os.path.isfile(os.path.join(config.default_data_path, train_data))), \
             f'{train_data} dataset does not exist'
@@ -38,7 +40,7 @@ class StrategyEvaluator:
         f = Features()
         pt = hyperparam_tuning.ParamTuning()
 
-        tot_time = time.time(); start_time = time.time()
+        start_time = time.time()
         f.load_data(os.path.join(config.default_data_path, train_data), self.encoding)
         fX, y = f.build()
         print("Loaded train dataset and build features for {} setup; {} sec.".format(
@@ -75,6 +77,8 @@ class StrategyEvaluator:
     def evaluate(self, dataset):
         """Train and evaluate selected ML algorithms with custom hyper-parameters on dataset.
         """
+        tot_time = time.time()
+
         LGMSimVars.per_metric_optValues = StaticValues.opt_values[self.encoding.lower()]
         assert (os.path.isfile(os.path.join(config.default_data_path, dataset))), \
             f'{os.path.join(config.default_data_path, dataset)} dataset does not exist!!!'
@@ -96,7 +100,7 @@ class StrategyEvaluator:
             print('=======', end='')
             print(len(clf) * '=')
 
-            tot_time = time.time(); start_time = time.time()
+            start_time = time.time()
             # 1st phase: train each classifier on the whole train dataset (no folds)
             estimator = pt.clf_names[clf][0](**config.MLConf.clf_custom_params[clf])
             estimator = pt.trainClassifier(fX_train, y_train, estimator)
@@ -111,7 +115,7 @@ class StrategyEvaluator:
                 'time': start_time
             })
 
-            print("The whole process took {} sec.\n".format(time.time() - tot_time))
+        print("The whole process took {} sec.\n".format(time.time() - tot_time))
 
     @staticmethod
     def _print_stats(params):
