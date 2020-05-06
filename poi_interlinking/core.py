@@ -5,6 +5,9 @@
 import time
 import os
 from sklearn.model_selection import train_test_split
+from shutil import copyfile
+from datetime import datetime
+import csv
 
 from poi_interlinking import config
 from poi_interlinking.learning import hyperparam_tuning
@@ -66,11 +69,9 @@ class StrategyEvaluator:
         start_time = time.time()
         # 3th phase: test the fine tuned best classifier on the test dataset
         metrics = pt.testClassifier(fX, y, estimator)
-        self._print_stats({
-            'classifier': best_clf['classifier'],
-            **metrics,
-            'time': start_time
-        })
+
+        res = dict(Classifier=best_clf['classifier'], **metrics, time=time.time() - start_time)
+        self._print_stats(res)
 
         print("The whole process took {} sec.".format(time.time() - tot_time))
 
@@ -78,6 +79,13 @@ class StrategyEvaluator:
         """Train and evaluate selected ML algorithms with custom hyper-parameters on dataset.
         """
         tot_time = time.time()
+
+        # Create folder to store experiments
+        date_time = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
+        exp_folder = os.path.join('experiments', f'exp_{date_time}')
+        os.makedirs(exp_folder)
+
+        copyfile('poi_interlinking/config.py', os.path.join(exp_folder, 'config.py'))
 
         LGMSimVars.per_metric_optValues = StaticValues.opt_values[self.encoding.lower()]
         assert (os.path.isfile(os.path.join(config.default_data_path, dataset))), \
@@ -93,7 +101,7 @@ class StrategyEvaluator:
             config.MLConf.classification_method, time.time() - start_time))
 
         fX_train, fX_test, y_train, y_test = train_test_split(
-            fX, y, stratify=y, test_size=0.2, random_state=config.seed_no)
+            fX, y, stratify=y, test_size=config.test_size, random_state=config.seed_no)
 
         for clf in config.MLConf.clf_custom_params:
             print('Method {}'.format(clf))
@@ -109,11 +117,10 @@ class StrategyEvaluator:
             start_time = time.time()
             # 2nd phase: test each classifier on the test dataset
             metrics = pt.testClassifier(fX_test, y_test, estimator)
-            self._print_stats({
-                'classifier': clf,
-                **metrics,
-                'time': start_time
-            })
+
+            res = dict(Classifier=clf, **metrics, time=time.time() - start_time)
+            self._print_stats(res)
+            self.write_results(os.path.join(exp_folder, 'output.csv'), res)
 
         print("The whole process took {} sec.\n".format(time.time() - tot_time))
 
@@ -122,12 +129,12 @@ class StrategyEvaluator:
         print("| Method\t& Accuracy\t& Precision\t& Prec-weighted\t& Recall\t& Rec-weighted"
               "\t& F1-Score\t& F1-weighted\t& Time (sec)")
         print("||{}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}".format(
-            params['classifier'],
-            params['accuracy'],
-            params['precision'], params['precision_weighted'],
-            params['recall'], params['recall_weighted'],
-            params['f1_score'], params['f1_score_weighted'],
-            time.time() - params['time']))
+            params['Classifier'],
+            params['Accuracy'],
+            params['Precision'], params['Precision_weighted'],
+            params['Recall'], params['Recall_weighted'],
+            params['F1_score'], params['F1_score_weighted'],
+            params['time']))
 
         # if params['feature_importances'] is not None:
         #     importances = np.ma.masked_equal(params['feature_importances'], 0.0)
@@ -144,3 +151,26 @@ class StrategyEvaluator:
         #     ), headers, tablefmt="simple"))
 
         print()
+
+    @staticmethod
+    def write_results(fpath, results, delimiter='&'):
+        """
+        Writes full and averaged experiment results.
+
+        Args:
+            fpath (str): Path to write
+            results (dict): Contains metrics as keys and the corresponding values \
+                values
+
+        Returns:
+            None
+        """
+        file_exists = True
+        if not os.path.exists(fpath): file_exists = False
+
+        with open(fpath, 'a+') as file:
+            writer = csv.writer(file, delimiter=delimiter)
+            if not file_exists:
+                writer.writerow(results.keys())
+            writer.writerow(results.values())
+

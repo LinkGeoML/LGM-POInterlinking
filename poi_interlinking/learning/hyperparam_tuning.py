@@ -174,12 +174,12 @@ class ParamTuning:
 
         metrics = dict()
         # acc = accuracy_score(y_test, y_pred)
-        metrics['accuracy'] = balanced_accuracy_score(y_test, y_pred)
-        metrics['precision'] = precision_score(y_test, y_pred)
-        metrics['precision_weighted'] = precision_score(y_test, y_pred, average='weighted')
-        metrics['recall'] = recall_score(y_test, y_pred)
-        metrics['recall_weighted'] = recall_score(y_test, y_pred, average='weighted')
-        metrics['f1_score'] = f1_score(y_test, y_pred)
-        metrics['f1_score_weighted'] = f1_score(y_test, y_pred, average='weighted')
+        metrics['Accuracy'] = balanced_accuracy_score(y_test, y_pred)
+        metrics['Precision'] = precision_score(y_test, y_pred)
+        metrics['Precision_weighted'] = precision_score(y_test, y_pred, average='weighted')
+        metrics['Recall'] = recall_score(y_test, y_pred)
+        metrics['Recall_weighted'] = recall_score(y_test, y_pred, average='weighted')
+        metrics['F1_score'] = f1_score(y_test, y_pred)
+        metrics['F1_score_weighted'] = f1_score(y_test, y_pred, average='weighted')
 
         return metrics

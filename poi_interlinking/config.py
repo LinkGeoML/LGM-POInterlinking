@@ -32,6 +32,8 @@ sort_thres = 0.55
 #: int: Seed used by each of the random number generators.
 seed_no = 13
 
+test_size = 0.2
+
 
 class MLConf:
     """
