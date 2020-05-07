@@ -24,7 +24,7 @@ def download(bbox):
 @click.option('--train_set', default='dataset-string-similarity_global_1k.csv',
               help='Train dataset to extract frequent terms from. '
                    'It requires once to run: python -m nltk.downloader \'punkt\'')
-@click.option('--encoding', default='latin', type=click.Choice(['latin', 'global']),
+@click.option('--encoding', default='latin', show_default=True, type=click.Choice(['latin', 'global']),
               help='specify the alphabet encoding of toponyms in dataset.')
 @click.option('--exp_path', help='Prefix to be used in naming the file with the extracted frequent terms.')
 def freq_terms(train_set, encoding, exp_path):
@@ -35,9 +35,9 @@ def freq_terms(train_set, encoding, exp_path):
                                       'similarity metrics')
 @click.option('--train_set', default='dataset-string-similarity_global_1k.csv',
               help='Train dataset to learn parameters.')
-@click.option('--sim_type', default='lgm', type=click.Choice(['basic', 'sorted', 'lgm']),
-              help='Group of similarities to train. Valid options are: basic, sorted, lgm')
-@click.option('--encoding', default='latin', type=click.Choice(['latin', 'global']),
+@click.option('--sim_type', default='lgm', show_default=True, type=click.Choice(['basic', 'sorted', 'lgm']),
+              help='Group of similarities to train.')
+@click.option('--encoding', default='latin', show_default=True, type=click.Choice(['latin', 'global']),
               help='Specify the alphabet encoding of toponyms in dataset.')
 def learn_params(train_set, sim_type, encoding):
     if sim_type == 'lgm':
@@ -50,7 +50,7 @@ def learn_params(train_set, sim_type, encoding):
 @click.option('--train_set', default='dataset-string-similarity_global_1k.csv',
               help='Train dataset to learn parameters.')
 @click.option('--test_set', default='dataset-string-similarity.txt', help='Test dataset to evaluate the models.')
-@click.option('--encoding', default='latin', type=click.Choice(['latin', 'global']),
+@click.option('--encoding', default='latin', show_default=True, type=click.Choice(['latin', 'global']),
               help='Specify the alphabet encoding of toponyms in dataset.')
 def hyperparams_learn(train_set, test_set, encoding):
     core.StrategyEvaluator(encoding).hyperparamTuning(train_set, test_set)
@@ -58,7 +58,7 @@ def hyperparams_learn(train_set, test_set, encoding):
 
 @cli.command('evaluate', help='')
 @click.option('--data_set', default='', help='the dataset to train/evaluate the models.')
-@click.option('--encoding', default='latin', type=click.Choice(['latin', 'global']),
+@click.option('--encoding', default='latin', show_default=True, type=click.Choice(['latin', 'global']),
               help='Specify the encoding of toponyms in dataset.')
 def eval_classifiers(data_set, encoding):
     core.StrategyEvaluator(encoding).evaluate(data_set)
