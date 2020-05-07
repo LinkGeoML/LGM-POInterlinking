@@ -104,80 +104,115 @@ def getBasePath():
 
 
 class StaticValues:
-    featureColumns = [
-        "Damerau-Levenshtein",
+    # sim_features_cols = [
+    #     "Damerau-Levenshtein",
+    #     "Jaro",
+    #     "Jaro-Winkler",
+    #     "Jaro-Winkler reversed",
+    #     "Sorted Jaro-Winkler",
+    #     # "Permuted Jaro-Winkler",
+    #     "Cosine N-grams",
+    #     "Jaccard N-grams",
+    #     "Dice bigrams",
+    #     "Jaccard skipgrams",
+    #     "Monge-Elkan",
+    #     "Soft-Jaccard",
+    #     "Davis and De Salles",
+    #     "Damerau-Levenshtein Sorted",
+    #     "Jaro Sorted",
+    #     "Jaro-Winkler Sorted",
+    #     "Jaro-Winkler reversed Sorted",
+    #     # "Sorted Jaro-Winkler Sorted",
+    #     # "Permuted Jaro-Winkler Sorted",
+    #     "Cosine N-grams Sorted",
+    #     "Jaccard N-grams Sorted",
+    #     "Dice bigrams Sorted",
+    #     "Jaccard skipgrams Sorted",
+    #     "Monge-Elkan Sorted",
+    #     "Soft-Jaccard Sorted",
+    #     "Davis and De Salles Sorted",
+    #     "LinkGeoML Jaro-Winkler",
+    #     "LinkGeoML Jaro-Winkler reversed",
+    #     # "LSimilarity",
+    #     "LSimilarity_wavg",
+    #     # "LSimilarity_davies",
+    #     # "LSimilarity_skipgram",
+    #     # "LSimilarity_soft_jaccard",
+    #     # "LSimilarity_strike_a_match",
+    #     # "LSimilarity_cosine",
+    #     # "LSimilarity_monge_elkan",
+    #     # "LSimilarity_jaro_winkler",
+    #     # "LSimilarity_jaro",
+    #     # "LSimilarity_jaro_winkler_reversed",
+    #     "LSimilarity_davies_wavg",
+    #     "LSimilarity_skipgram_wavg",
+    #     "LSimilarity_soft_jaccard_wavg",
+    #     "LSimilarity_strike_a_match_wavg",
+    #     "LSimilarity_cosine_wavg",
+    #     "LSimilarity_jaccard_wavg",
+    #     "LSimilarity_monge_elkan_wavg",
+    #     "LSimilarity_jaro_winkler_wavg",
+    #     "LSimilarity_jaro_wavg",
+    #     "LSimilarity_jaro_winkler_reversed_wavg",
+    #     "LSimilarity_l_jaro_winkler_wavg",
+    #     "LSimilarity_l_jaro_winkler_reversed_wavg",
+    #     # "LSimilarity_baseScore",
+    #     # "LSimilarity_mismatchScore",
+    #     # "LSimilarity_specialScore",
+    #     "Avg LSimilarity_baseScore",
+    #     "Avg LSimilarity_mismatchScore",
+    #     "Avg LSimilarity_specialScore",
+    #     # non metric features
+    #     # "contains_str1",
+    #     # "contains_str2",
+    #     # "WordsNo_str1",
+    #     # "WordsNo_str2",
+    #     # "dashed_str1",
+    #     # "dashed_str2",
+    #     # "hasFreqTerm_str1",
+    #     # "hasFreqTerm_str2",
+    #     # "posOfHigherSim_str1_start",
+    #     # "posOfHigherSim_str1_middle",
+    #     # "posOfHigherSim_str1_end",
+    #     # "posOfHigherSim_str2_start",
+    #     # "posOfHigherSim_str2_middle",
+    #     # "posOfHigherSim_str2_end",
+    # ]
+
+    sim_features_cols = [
+        "Damerau_Levenshtein",
         "Jaro",
-        "Jaro-Winkler",
-        "Jaro-Winkler reversed",
-        "Sorted Jaro-Winkler",
+        "Jaro_Winkler",
+        "Jaro_Winkler_reversed",
+        "Jaro_Winkler_sorted",
         # "Permuted Jaro-Winkler",
-        "Cosine N-grams",
-        "Jaccard N-grams",
-        "Dice bigrams",
-        "Jaccard skipgrams",
-        "Monge-Elkan",
-        "Soft-Jaccard",
-        "Davis and De Salles",
-        "Damerau-Levenshtein Sorted",
-        "Jaro Sorted",
-        "Jaro-Winkler Sorted",
-        "Jaro-Winkler reversed Sorted",
-        # "Sorted Jaro-Winkler Sorted",
-        # "Permuted Jaro-Winkler Sorted",
-        "Cosine N-grams Sorted",
-        "Jaccard N-grams Sorted",
-        "Dice bigrams Sorted",
-        "Jaccard skipgrams Sorted",
-        "Monge-Elkan Sorted",
-        "Soft-Jaccard Sorted",
-        "Davis and De Salles Sorted",
-        "LinkGeoML Jaro-Winkler",
-        "LinkGeoML Jaro-Winkler reversed",
-        # "LSimilarity",
-        "LSimilarity_wavg",
-        # "LSimilarity_davies",
-        # "LSimilarity_skipgram",
-        # "LSimilarity_soft_jaccard",
-        # "LSimilarity_strike_a_match",
-        # "LSimilarity_cosine",
-        # "LSimilarity_monge_elkan",
-        # "LSimilarity_jaro_winkler",
-        # "LSimilarity_jaro",
-        # "LSimilarity_jaro_winkler_reversed",
-        "LSimilarity_davies_wavg",
-        "LSimilarity_skipgram_wavg",
-        "LSimilarity_soft_jaccard_wavg",
-        "LSimilarity_strike_a_match_wavg",
-        "LSimilarity_cosine_wavg",
-        "LSimilarity_jaccard_wavg",
-        "LSimilarity_monge_elkan_wavg",
-        "LSimilarity_jaro_winkler_wavg",
-        "LSimilarity_jaro_wavg",
-        "LSimilarity_jaro_winkler_reversed_wavg",
-        "LSimilarity_l_jaro_winkler_wavg",
-        "LSimilarity_l_jaro_winkler_reversed_wavg",
-        # "LSimilarity_baseScore",
-        # "LSimilarity_mismatchScore",
-        # "LSimilarity_specialScore",
-        "Avg LSimilarity_baseScore",
-        "Avg LSimilarity_mismatchScore",
-        "Avg LSimilarity_specialScore",
-        # non metric features
-        # "contains_str1",
-        # "contains_str2",
-        # "WordsNo_str1",
-        # "WordsNo_str2",
-        # "dashed_str1",
-        # "dashed_str2",
-        # "hasFreqTerm_str1",
-        # "hasFreqTerm_str2",
-        # "posOfHigherSim_str1_start",
-        # "posOfHigherSim_str1_middle",
-        # "posOfHigherSim_str1_end",
-        # "posOfHigherSim_str2_start",
-        # "posOfHigherSim_str2_middle",
-        # "posOfHigherSim_str2_end",
+        "Cosine_ngrams",
+        "Jaccard_ngrams",
+        "Dice_bigrams",
+        "Jaccard_skipgrams",
+        "Monge_Elkan",
+        "Soft_Jaccard",
+        "Davis_and_De_Salles",
+        "Tuned_Jaro_Winkler",
+        "Tuned_Jaro_Winkler_reversed",
     ]
+
+    individual_lgm_feature_cols = [
+        "LGM_baseScore",
+        "LGM_mismatchScore",
+        "LGM_specialScore",
+
+    ]
+
+    spatial_feature_cols = [
+        'point_dist'
+    ]
+
+    address_feature_cols = [
+        'street_numbers_diff',
+    ] + [f'{x}_on_street_names' for x in sim_features_cols]
+
+    final_cols = []
 
     opt_values = {
         'latin': {
@@ -234,3 +269,29 @@ class StaticValues:
         'tuned_jaro_winkler': ['basic', 'sorted', 'lgm'],
         'tuned_jaro_winkler_reversed': ['basic', 'sorted', 'lgm'],
     }
+
+    def __init__(self, sim_type='basic'):
+        if sim_type == 'lgm':
+            self.final_cols += self.address_feature_cols + [
+                f'{x}_{y}_on_street_names' for x in ['Sorted', 'LGM']
+                for y in self.sim_features_cols if y.lower() != 'jaro_winkler_sorted'
+            ]
+            self.final_cols += [f'{x}_on_street_names' for x in self.individual_lgm_feature_cols]
+            self.final_cols += self.sim_features_cols + [
+                f'{x}_{y}' for x in ['Sorted', 'LGM']
+                for y in self.sim_features_cols if y.lower() != 'jaro_winkler_sorted'
+            ]
+            self.final_cols += self.individual_lgm_feature_cols
+            self.final_cols += self.spatial_feature_cols
+        elif sim_type == 'sorted':
+            self.final_cols += self.address_feature_cols + [
+                f'{x}_{y}_on_street_names' for x in ['Sorted']
+                for y in self.sim_features_cols if y.lower() != 'jaro_winkler_sorted'
+            ]
+            self.final_cols += self.sim_features_cols + [
+                f'{x}_{y}' for x in ['Sorted']
+                for y in self.sim_features_cols if y.lower() != 'jaro_winkler_sorted'
+            ]
+            self.final_cols += self.spatial_feature_cols
+        else:  # basic or whatever
+            self.final_cols = self.address_feature_cols + self.sim_features_cols + self.spatial_feature_cols

@@ -7,13 +7,13 @@ import os
 from sklearn.model_selection import train_test_split
 from shutil import copyfile
 from datetime import datetime
-import csv
 
 from poi_interlinking import config
 from poi_interlinking.learning import hyperparam_tuning
 from poi_interlinking.helpers import StaticValues
 from poi_interlinking.processing.features import Features
 from poi_interlinking.processing.sim_measures import LGMSimVars
+from poi_interlinking.misc import writers
 
 
 class StrategyEvaluator:
@@ -100,6 +100,9 @@ class StrategyEvaluator:
         print("Loaded dataset and build features for {} setup; {} sec.".format(
             config.MLConf.classification_method, time.time() - start_time))
 
+        if config.save_intermediate_results:
+            writers.save_features(os.path.join(exp_folder, 'features_build.csv'), fX)
+
         fX_train, fX_test, y_train, y_test = train_test_split(
             fX, y, stratify=y, test_size=config.test_size, random_state=config.seed_no)
 
@@ -120,7 +123,7 @@ class StrategyEvaluator:
 
             res = dict(Classifier=clf, **metrics, time=time.time() - start_time)
             self._print_stats(res)
-            self.write_results(os.path.join(exp_folder, 'output.csv'), res)
+            writers.write_results(os.path.join(exp_folder, 'output.csv'), res)
 
         print("The whole process took {} sec.\n".format(time.time() - tot_time))
 
@@ -151,26 +154,3 @@ class StrategyEvaluator:
         #     ), headers, tablefmt="simple"))
 
         print()
-
-    @staticmethod
-    def write_results(fpath, results, delimiter='&'):
-        """
-        Writes full and averaged experiment results.
-
-        Args:
-            fpath (str): Path to write
-            results (dict): Contains metrics as keys and the corresponding values \
-                values
-
-        Returns:
-            None
-        """
-        file_exists = True
-        if not os.path.exists(fpath): file_exists = False
-
-        with open(fpath, 'a+') as file:
-            writer = csv.writer(file, delimiter=delimiter)
-            if not file_exists:
-                writer.writerow(results.keys())
-            writer.writerow(results.values())
-

@@ -144,7 +144,7 @@ class Features:
         fX0 = preprocessing.MinMaxScaler().fit_transform(fX0[:, np.newaxis])
         fX3 = preprocessing.MinMaxScaler().fit_transform(fX3)
 
-        fX = np.concatenate((fX0, fX1, fX2, fX3), axis=1)
+        fX = np.concatenate((fX0, fX2, fX1, fX3), axis=1)
 
         return fX, y
 

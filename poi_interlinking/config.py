@@ -34,6 +34,8 @@ seed_no = 13
 
 test_size = 0.2
 
+save_intermediate_results = False
+
 
 class MLConf:
     """
