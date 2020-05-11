@@ -35,7 +35,7 @@ class StrategyEvaluator:
         """
         tot_time = time.time()
 
-        LGMSimVars.per_metric_optValues = StaticValues.opt_values[self.encoding.lower()]
+        LGMSimVars.per_metric_optValues = config.MLConf.sim_opt_params[self.encoding.lower()]
         assert (os.path.isfile(os.path.join(config.default_data_path, train_data))), \
             f'{train_data} dataset does not exist'
         assert (os.path.isfile(os.path.join(config.default_data_path, test_data))), \
@@ -88,7 +88,7 @@ class StrategyEvaluator:
 
         copyfile('poi_interlinking/config.py', os.path.join(exp_folder, 'config.py'))
 
-        LGMSimVars.per_metric_optValues = StaticValues.opt_values[self.encoding.lower()]
+        LGMSimVars.per_metric_optValues = config.MLConf.sim_opt_params[self.encoding.lower()]
         assert (os.path.isfile(os.path.join(config.default_data_path, dataset))), \
             f'{os.path.join(config.default_data_path, dataset)} dataset does not exist!!!'
 
