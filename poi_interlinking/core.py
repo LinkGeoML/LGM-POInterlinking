@@ -7,6 +7,7 @@ import os
 from sklearn.model_selection import train_test_split
 from shutil import copyfile
 from datetime import datetime
+import numpy as np
 
 from poi_interlinking import config
 from poi_interlinking.learning import hyperparam_tuning
@@ -100,11 +101,15 @@ class StrategyEvaluator:
         print("Loaded dataset and build features for {} setup; {} sec.".format(
             config.MLConf.classification_method, time.time() - start_time))
 
-        if config.save_intermediate_results:
-            writers.save_features(os.path.join(exp_folder, 'features_build.csv'), fX)
+        fX_train, fX_test, y_train, y_test, train_set_df, test_set_df = train_test_split(
+            fX, y, f.get_loaded_data(), stratify=y, test_size=config.test_size, random_state=config.seed_no)
 
-        fX_train, fX_test, y_train, y_test = train_test_split(
-            fX, y, stratify=y, test_size=config.test_size, random_state=config.seed_no)
+        if config.save_intermediate_results:
+            writers.save_features(
+                os.path.join(exp_folder, 'features_build.csv'), np.concatenate((fX, y[:, np.newaxis]), axis=1))
+
+            train_set_df.to_csv(os.path.join(exp_folder, 'train.csv'), index=False)
+            test_set_df.to_csv(os.path.join(exp_folder, 'test.csv'), index=False)
 
         for clf in config.MLConf.clf_custom_params:
             print('Method {}'.format(clf))

@@ -81,7 +81,7 @@ class Features:
             Binary labels {True, False} to train the classifiers.
         """
         # y = self.data_df[config.use_cols['status']].str.upper().map(self.d).values
-        y = self.data_df[config.use_cols['status']].values
+        y = self.data_df[config.use_cols['status']].to_numpy()
 
         print('Extracting street numbers from addresses...')
         self.data_df = self.data_df.progress_apply(self.split_address, axis=1, result_type='expand')
@@ -267,3 +267,6 @@ class Features:
         lno2 = map(int, no2.split(',')) if no2 else [0]
 
         return min([abs(a - b) for a in lno1 for b in lno2])
+
+    def get_loaded_data(self):
+        return self.data_df
