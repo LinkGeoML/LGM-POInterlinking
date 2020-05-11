@@ -233,6 +233,8 @@ class StaticValues:
     }
 
     def __init__(self, sim_type='basic'):
+        del self.final_cols[:]
+
         if sim_type == 'lgm':
             self.final_cols += self.address_feature_cols + [
                 f'{x}_{y}_on_street_names' for x in ['Sorted', 'LGM']

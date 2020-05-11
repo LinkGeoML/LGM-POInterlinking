@@ -106,7 +106,11 @@ class StrategyEvaluator:
 
         if config.save_intermediate_results:
             writers.save_features(
-                os.path.join(exp_folder, 'features_build.csv'), np.concatenate((fX, y[:, np.newaxis]), axis=1))
+                os.path.join(exp_folder, 'train_features_build.csv'),
+                np.concatenate((fX_train, y_train[:, np.newaxis]), axis=1))
+            writers.save_features(
+                os.path.join(exp_folder, 'test_features_build.csv'),
+                np.concatenate((fX_test, y_test[:, np.newaxis]), axis=1))
 
             train_set_df.to_csv(os.path.join(exp_folder, 'train.csv'), index=False)
             test_set_df.to_csv(os.path.join(exp_folder, 'test.csv'), index=False)
