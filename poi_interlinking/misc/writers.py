@@ -8,13 +8,17 @@ from poi_interlinking import config
 
 def save_features(fpath, data, delimiter=','):
     h = helpers.StaticValues(config.MLConf.classification_method)
-    cols = h.final_cols + ['Class']
+    cols = ['index'] + h.final_cols + ['Class']
     # TODO: transform to metric (temporal for saving)
-    data[:, 0] = 1 - data[:, 0]
-    data[:, -1] = 1 - data[:, -1]
+    data[:, 1] -= 1
+    data[:, 1] *= -1
+    data[:, -2] -= 1
+    data[:, -2] *= -1
 
-    np.savetxt(fpath, data, delimiter=delimiter, header=f'{delimiter}'.join(cols),
-               fmt=' '.join(['%1.3f']*(len(cols) - 1) + ['%i']))
+    np.savetxt(
+        fpath, data, header=f'{delimiter}'.join(cols), comments='',
+        fmt=f'{delimiter}'.join(['%i'] + ['%1.3f']*len(h.final_cols) + ['%i'])
+    )
 
 
 def write_results(fpath, results, delimiter='&'):

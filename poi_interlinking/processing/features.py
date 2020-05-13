@@ -63,7 +63,7 @@ class Features:
         self.data_df = None
 
     def load_data(self, fname, encoding):
-        self.data_df = pd.read_csv(fname, sep=config.delimiter, names=config.fieldnames, dtype=self.dtypes,
+        self.data_df = pd.read_csv(fname, sep=config.delimiter, names=config.fieldnames,  # dtype=self.dtypes,
                                    usecols=config.use_cols.values(), na_filter=True, encoding='utf8')
         self.data_df.fillna('', inplace=True)
 
@@ -90,7 +90,6 @@ class Features:
         fX0 = self.data_df.progress_apply(
             lambda x: self.arithmetic_features(x['str_no1'], x['str_no2']), axis=1).to_numpy()
 
-        fX = None
         print(f'Computing features of the {self.clf_method.lower()} group...')
         if self.clf_method.lower() == 'basic':
             fX1 = np.asarray(list(tqdm(
@@ -248,16 +247,14 @@ class Features:
     def split_address(row):
         for s in ['1', '2']:
             row[f'str_name{s}'] = re.sub(no_match, '', row[f'Address{s}']).strip()
-
-            strno_str = re.findall(r'\b\d+', row[f'Address{s}'])
-            strno = list(map(int, strno_str))
+            strno = set(map(int, re.findall(r'\b\d+', row[f'Address{s}'])))
 
             if len(strno) > 1:
                 max_no = max(strno)
                 strno.remove(max_no)
                 # row[f'str_name{s}'] += ' ' + str(max_no)
 
-            row[f'str_no{s}'] = ','.join(strno_str)
+            row[f'str_no{s}'] = ','.join(map(str, strno))
 
         return row
 

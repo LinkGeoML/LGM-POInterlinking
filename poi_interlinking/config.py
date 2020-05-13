@@ -11,6 +11,7 @@ freq_term_size = 400
 # fieldnames = ["s1", "s2", "status", "c1", "c2", "a1", "a2", "cc1", "cc2"]
 fieldnames = None
 use_cols = dict(
+    ID1='ID1', ID2='ID2',
     s1='Name1', s2='Name2', addr1='Address1', addr2='Address2',
     lon1='st_x1', lat1='st_y1', lon2='st_x2', lat2='st_y2',
     status='Class'
@@ -34,7 +35,7 @@ seed_no = 13
 
 test_size = 0.2
 
-save_intermediate_results = False
+save_intermediate_results = True
 
 
 class MLConf:
@@ -69,7 +70,7 @@ class MLConf:
     :vartype XGBoost_hyperparameters_dist: :obj:`dict`
     """
 
-    kfold_parameter = 5  #: int: The number of outer folds that splits the dataset for the k-fold cross-validation.
+    kfold_no = 1  #: int: The number of outer folds that splits the dataset for the k-fold cross-validation.
 
     #: int: The number of inner folds that splits the dataset for the k-fold cross-validation.
     kfold_inner_parameter = 4
