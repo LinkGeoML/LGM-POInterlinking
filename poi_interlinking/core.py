@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
 from shutil import copyfile
 from datetime import datetime
 import numpy as np
+from collections import defaultdict
 
 from poi_interlinking import config
 from poi_interlinking.learning import hyperparam_tuning
@@ -106,6 +107,7 @@ class StrategyEvaluator:
                                      test_size=config.test_size)
         fold = 1
 
+        res = dict()
         for train_idxs, test_idxs in skf.split(fX, y):
             fX_train, fX_test, train_set_df = fX[train_idxs], fX[test_idxs], f.get_loaded_data().iloc[train_idxs]
             y_train, y_test, test_set_df = y[train_idxs], y[test_idxs], f.get_loaded_data().iloc[test_idxs]
@@ -131,25 +133,34 @@ class StrategyEvaluator:
                                                           index_label='index')
 
             for clf in config.MLConf.clf_custom_params:
-                print('Method {}'.format(clf))
-                print('=======', end='')
-                print(len(clf) * '=')
-
                 start_time = time.time()
                 # 1st phase: train each classifier on the whole train dataset (no folds)
                 estimator = pt.clf_names[clf][0](**config.MLConf.clf_custom_params[clf])
                 estimator = pt.trainClassifier(fX_train, y_train, estimator)
-                print("Finished training model on dataset; {} sec.".format(time.time() - start_time))
+                print(f"Finished training {clf} model on dataset for fold {fold} ; {time.time() - start_time} sec.")
 
-                start_time = time.time()
+                # start_time = time.time()
                 # 2nd phase: test each classifier on the test dataset
                 metrics = pt.testClassifier(fX_test, y_test, estimator)
 
-                res = dict(Classifier=clf, **metrics, time=time.time() - start_time)
-                self._print_stats(res)
-                writers.write_results(os.path.join(exp_folder, 'output.csv'), res)
+                if clf not in res: res[clf] = defaultdict(list)
+                for m, v in metrics.items():
+                    res[clf][m].append(v)
+                res[clf]['time'].append(time.time() - start_time)
 
             fold += 1
+
+        for clf, metrics in res.items():
+            print('Method {}'.format(clf))
+            print('=======', end='')
+            print(len(clf) * '=')
+
+            output = dict()
+            for m, v in metrics.items():
+                output[m] = np.mean(v)
+
+            self._print_stats(dict(Classifier=clf, **output))
+            writers.write_results(os.path.join(exp_folder, 'output.csv'), dict(Classifier=clf, **output))
 
         print("The whole process took {} sec.\n".format(time.time() - tot_time))
 

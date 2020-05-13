@@ -35,7 +35,7 @@ seed_no = 13
 
 test_size = 0.2
 
-save_intermediate_results = True
+save_intermediate_results = False
 
 
 class MLConf:
@@ -70,7 +70,7 @@ class MLConf:
     :vartype XGBoost_hyperparameters_dist: :obj:`dict`
     """
 
-    kfold_no = 1  #: int: The number of outer folds that splits the dataset for the k-fold cross-validation.
+    kfold_no = 5  #: int: The number of outer folds that splits the dataset for the k-fold cross-validation.
 
     #: int: The number of inner folds that splits the dataset for the k-fold cross-validation.
     kfold_inner_parameter = 4
