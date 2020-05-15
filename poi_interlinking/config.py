@@ -86,7 +86,7 @@ class MLConf:
     """
 
     # accepted values: randomized, grid, hyperband - not yet implemented!!!
-    hyperparams_search_method = 'randomized'
+    hyperparams_search_method = 'grid'
     """str: Search Method to use for finding best hyperparameters. (*randomized* | *grid*).
     
     See Also
@@ -199,79 +199,104 @@ class MLConf:
     # These parameters constitute the search space for GridSearchCV in our experiments.
     SVM_hyperparameters = [
         {
-            'kernel': ['rbf', 'sigmoid'], 'gamma': [1e-2, 1e-3, 1e-4, 1e-5],
-            'C': [0.001, 0.01, 0.1, 1, 10, 25, 50, 100, 1000], 'max_iter': [3000]
+            'kernel': ['rbf', 'sigmoid'],
+            'gamma': [1e-2, 1e-3, 1, 5, 10, 'scale'],
+            'C': [0.01, 0.1, 1, 10, 25, 50, 100, 300],
+            'max_iter': [3000],
+            'class_weight': ['balanced', {1: 2, 4: 1}, {1: 3, 4: 1}],
         },
         {
-            'kernel': ['poly'], 'degree': [1, 2, 3], 'gamma': ['scale', 'auto'], 'C': [0.01, 0.1, 1, 10, 25, 50, 100],
-            'max_iter': [3000]
+            'kernel': ['poly'],
+            'degree': [1, 2, 3],
+            'gamma': ['scale', 'auto'],
+            'C': [0.01, 0.1, 1, 10, 25, 50, 100],
+            'max_iter': [3000],
+            'class_weight': ['balanced', {1: 2, 4: 1}, {1: 3, 4: 1}],
         },
     ]
     DecisionTree_hyperparameters = {
-        'max_depth': np.arange(1, 33),
-        'min_samples_split': [2, 5, 10, 20, 50, 100, 200],
-        'min_samples_leaf': np.arange(1, 11, 3),
-        'max_features': list(np.arange(2, 11, 2)) + ["sqrt", "log2", None]
+        'max_depth': [2, 3, 5, 10, 30, 50, 60, 80, 100],
+        'min_samples_split': [2, 5, 10, 20, 50, 100],
+        'min_samples_leaf': [1, 2, 4, 10],
+        'max_features': list(np.arange(2, 11, 2)) + ["sqrt", "log2"],
+        'splitter': ['best', 'random'],
+        'class_weight': ['balanced', {1: 2, 4: 1}, {1: 3, 4: 1}],
     }
     RandomForest_hyperparameters = {
-        'bootstrap': [True, False],
-        'max_depth': [10, 20, 30, 40, 50, 60, 100],
-        "n_estimators": [250, 500, 1000],
+        # 'bootstrap': [True, False],
+        'max_depth': [5, 10, 20, 30, 50, 70, 100],
+        "n_estimators": [100, 250, 500, 1000],
         'criterion': ['gini', 'entropy'],
-        'max_features': ['log2', 'sqrt'],  # auto is equal to sqrt
+        # 'max_features': ['log2', 'sqrt'],  # auto is equal to sqrt
         # 'min_samples_leaf': [1, 2, 4, 10],
-        'min_samples_split': [2, 5, 10, 50],
+        'min_samples_split': [2, 3, 5, 10],
+        'class_weight': ['balanced', {1: 2, 4: 1}, {1: 3, 4: 1}],
     }
     XGBoost_hyperparameters = {
-        "n_estimators": [500, 1000, 3000],
-        'max_depth': [3, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+        "n_estimators": [100, 500, 1000, 3000],
+        'max_depth': [3, 5, 10, 30, 50, 70, 80, 100],
         # hyperparameters to avoid overfitting
         # 'eta': list(np.linspace(0.01, 0.2, 10)),  # 'learning_rate'
         # 'gamma': [0, 1, 5],
         'subsample': [0.8, 0.9, 1],
         # # Values from 0.3 to 0.8 if you have many columns (especially if you did one-hot encoding),
         # # or 0.8 to 1 if you only have a few columns
-        'colsample_bytree': list(np.linspace(0.8, 1, 3)),
-        'min_child_weight': [1, 5, 10],
+        # 'colsample_bytree': list(np.linspace(0.8, 1, 3)),
+        # 'min_child_weight': [1, 5, 10],
+        'scale_pos_weight': [1, 2, 3],
     }
     MLP_hyperparameters = {
-        'learning_rate_init': [0.0001, 0.001, 0.005, 0.01, 0.05, 0.1],
-        'max_iter': [300, 500, 1000],
-        'solver': ['sgd', 'adam']
+        'hidden_layer_sizes': [(100,), (50, 50,)],
+        'learning_rate_init': [0.0001, 0.005, 0.01, 0.05, 0.1],
+        'max_iter': [3000],
+        'solver': ['lbfgs', 'sgd', 'adam'],
+        'activation': ['identity', 'logistic', 'tanh', 'relu'],
+        'tol': [1e-3, 1e-4],
     }
 
     # These parameters constitute the search space for RandomizedSearchCV in our experiments.
     SVM_hyperparameters_dist = {
-        'C': expon(scale=100), 'gamma': expon(scale=.1), 'kernel': ['rbf'], 'class_weight': ['balanced', None],
+        'C': expon(scale=100), 'gamma': expon(scale=.1),
+        'kernel': ['rbf'],
+        'class_weight': ['balanced', None],
         'max_iter': [10000]
     }
     DecisionTree_hyperparameters_dist = {
-        'max_depth': sp_randint(10, 100),
+        'max_depth': sp_randint(10, 200),
         'min_samples_split': sp_randint(2, 200),
         'min_samples_leaf': sp_randint(1, 10),
         'max_features': sp_randint(1, 11),
+        'class_weight': [None, 'balanced'] + [{1: w, 4: 1} for w in range(1, 5)],
     }
     RandomForest_hyperparameters_dist = {
-        'bootstrap': [True, False],
-        'max_depth': [10, 20, 30, 40, 50, 60, 100, None],
+        # 'bootstrap': [True, False],
+        'max_depth': sp_randint(3, 200),
         'criterion': ['gini', 'entropy'],
         'max_features': ['sqrt', 'log2'],  # sp_randint(1, 11)
         'min_samples_leaf': sp_randint(1, 10),
-        'min_samples_split': sp_randint(2, 100),
-        "n_estimators": sp_randint(250, 1000),
+        'min_samples_split': sp_randint(2, 30),
+        "n_estimators": sp_randint(200, 1000),
+        'class_weight': ['balanced', None] + [{1: w, 4: 1} for w in range(1, 5)],
     }
     XGBoost_hyperparameters_dist = {
-        "n_estimators": sp_randint(500, 4000),
-        'max_depth': sp_randint(3, 100),
+        "n_estimators": sp_randint(50, 4000),
+        'max_depth': sp_randint(3, 200),
         # 'eta': expon(loc=0.01, scale=0.1),  # 'learning_rate'
         # hyperparameters to avoid overfitting
         'gamma': sp_randint(0, 5),
-        'subsample': truncnorm(0.7, 1),
-        'colsample_bytree': truncnorm(0.8, 1),
-        'min_child_weight': sp_randint(1, 10),
+        # 'subsample': truncnorm(0.7, 1),
+        'subsample': truncnorm(0.4, 0.7),
+        # 'colsample_bytree': truncnorm(0.8, 1),
+        # 'min_child_weight': sp_randint(1, 10),
+        'scale_pos_weight': sp_randint(1, 5),
+        "reg_alpha": truncnorm(0, 2),
+        'reg_lambda': sp_randint(1, 20),
     }
     MLP_hyperparameters_dist = {
+        'hidden_layer_sizes': [(100,), (50, 50,)],
         'learning_rate_init': expon(loc=0.0001, scale=0.1),
-        'max_iter': sp_randint(300, 1000),
-        'solver': ['sgd', 'adam']
+        'max_iter': [3000],
+        'solver': ['lbfgs', 'sgd', 'adam'],
+        'activation': ['identity', 'logistic', 'tanh', 'relu'],
+        'tol': [1e-3, 1e-4],
     }
