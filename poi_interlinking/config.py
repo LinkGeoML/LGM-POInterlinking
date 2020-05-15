@@ -125,25 +125,34 @@ class MLConf:
 
     clf_custom_params = {
         'SVM': {
-            # basic
-            'C': 1.0, 'max_iter': 3000,
-            # 'gamma': 0.2456161956918959, 'max_iter': 3000, 'C': 199.0212721894755, 'kernel': 'rbf',
-            # 'class_weight': None, 'tol': 0.0001, 'degree': 2,
+            # default
+            # 'C': 1.0, 'max_iter': 3000,
+            # best
+            'C': 100, 'class_weight': 'balanced', 'gamma': 0.01, 'kernel': 'sigmoid', 'max_iter': 10000,
             'random_state': seed_no
         },
         'DecisionTree': {
-            # basic
+            # default
             'max_depth': 100, 'max_features': 'auto',
+            # best
+            'class_weight': {0: 1, 1: 3}, 'max_depth': 50, 'max_features': 8, 'min_samples_leaf': 10,
+            'min_samples_split': 10, 'splitter': 'best',
             'random_state': seed_no,
         },
         'RandomForest': {
-            # basic
-            'n_estimators': 300, 'max_depth': 100, 'oob_score': True, 'bootstrap': True,
+            # default
+            # 'n_estimators': 300, 'max_depth': 100, 'oob_score': True, 'bootstrap': True,
+            # best
+            'class_weight': {0: 1, 1: 5}, 'criterion': 'gini', 'max_depth': 1700, 'max_features': 'sqrt',
+            'min_samples_split': 8, 'n_estimators': 50,
             'random_state': seed_no, 'n_jobs': n_jobs,  # 'oob_score': True,
         },
         'ExtraTrees': {
-            # basic
-            'n_estimators': 300, 'max_depth': 100,
+            # default
+            # 'n_estimators': 300, 'max_depth': 100,
+            # best
+            'class_weight': {0: 1, 1: 3}, 'criterion': 'entropy', 'max_depth': 1200, 'max_features': 'sqrt',
+            'min_samples_split': 8, 'n_estimators': 10,
             'random_state': seed_no, 'n_jobs': n_jobs
         },
         'XGBoost': {
@@ -154,8 +163,12 @@ class MLConf:
             'seed': seed_no, 'nthread': n_jobs
         },
         'MLP': {
-            'tol': 0.0001, 'learning_rate_init': 0.06794912926673598, 'max_iter': 1000, 'activation': 'logistic',
-            'solver': 'lbfgs',
+            # default
+            # 'tol': 0.0001, 'learning_rate_init': 0.06794912926673598, 'max_iter': 1000, 'activation': 'logistic',
+            # 'solver': 'lbfgs',
+            # best
+            'activation': 'relu', 'hidden_layer_sizes': (50, 50), 'learning_rate_init': 0.05, 'max_iter': 10000,
+            'solver': 'sgd', 'tol': 0.0001,
             'random_state': seed_no,
         },
     }
@@ -204,7 +217,7 @@ class MLConf:
             'kernel': ['rbf', 'sigmoid'],
             'gamma': [1e-2, 1e-3, 1, 5, 10, 'scale'],
             'C': [0.01, 0.1, 1, 10, 25, 50, 100, 300],
-            'max_iter': [3000],
+            'max_iter': [10000],
             'class_weight': ['balanced', {0: 1, 1: 3}, {0: 1, 1: 5}],
         },
         {
@@ -212,7 +225,7 @@ class MLConf:
             'degree': [1, 2, 3],
             'gamma': ['scale', 'auto'],
             'C': [0.01, 0.1, 1, 10, 25, 50, 100],
-            'max_iter': [3000],
+            'max_iter': [30000],
             'class_weight': ['balanced', {0: 1, 1: 3}, {0: 1, 1: 5}],
         },
     ]
@@ -226,8 +239,8 @@ class MLConf:
     }
     RandomForest_hyperparameters = {
         # 'bootstrap': [True, False],
-        'max_depth': [100, 500, 1000, 1200, 1500, 2000],
-        "n_estimators": [50, 80, 100, 250, 500],
+        'max_depth': [500, 1000, 1200, 1500, 1700, 1800, 2000],
+        "n_estimators": [20, 30, 50, 80, 100, 250, 500],
         'criterion': ['gini', 'entropy'],
         'max_features': ['log2', 'sqrt'],  # auto is equal to sqrt
         # 'min_samples_leaf': [1, 2, 4, 10],
@@ -252,8 +265,8 @@ class MLConf:
     }
     MLP_hyperparameters = {
         'hidden_layer_sizes': [(100,), (50, 50,)],
-        'learning_rate_init': [0.0001, 0.005, 0.01, 0.05, 0.1],
-        'max_iter': [3000],
+        'learning_rate_init': [0.005, 0.01, 0.05, 0.1],
+        'max_iter': [10000],
         'solver': ['lbfgs', 'sgd', 'adam'],
         'activation': ['identity', 'logistic', 'tanh', 'relu'],
         'tol': [1e-3, 1e-4],
@@ -263,7 +276,7 @@ class MLConf:
     SVM_hyperparameters_dist = {
         'C': expon(scale=100), 'gamma': expon(scale=.1),
         'kernel': ['rbf'],
-        'class_weight': ['balanced', None],
+        'class_weight': ['balanced'],
         'max_iter': [10000]
     }
     DecisionTree_hyperparameters_dist = {
@@ -271,7 +284,7 @@ class MLConf:
         'min_samples_split': sp_randint(2, 200),
         'min_samples_leaf': sp_randint(1, 10),
         'max_features': sp_randint(1, 11),
-        'class_weight': [None, 'balanced'] + [{1: w, 4: 1} for w in range(1, 5)],
+        'class_weight': ['balanced'] + [{0: 1, 1: w} for w in range(1, 5)],
     }
     RandomForest_hyperparameters_dist = {
         # 'bootstrap': [True, False],
@@ -281,7 +294,7 @@ class MLConf:
         'min_samples_leaf': sp_randint(1, 10),
         'min_samples_split': sp_randint(2, 30),
         "n_estimators": sp_randint(200, 1000),
-        'class_weight': ['balanced', None] + [{1: w, 4: 1} for w in range(1, 5)],
+        'class_weight': ['balanced'] + [{0: 1, 1: w} for w in range(1, 5)],
     }
     XGBoost_hyperparameters_dist = {
         "n_estimators": sp_randint(50, 4000),
@@ -293,14 +306,15 @@ class MLConf:
         'subsample': truncnorm(0.4, 0.7),
         # 'colsample_bytree': truncnorm(0.8, 1),
         # 'min_child_weight': sp_randint(1, 10),
-        'scale_pos_weight': sp_randint(1, 5),
+        # 'scale_pos_weight': sp_randint(1, 5),
+        'max_delta_step': sp_randint(1, 5),
         "reg_alpha": truncnorm(0, 2),
         'reg_lambda': sp_randint(1, 20),
     }
     MLP_hyperparameters_dist = {
         'hidden_layer_sizes': [(100,), (50, 50,)],
         'learning_rate_init': expon(loc=0.0001, scale=0.1),
-        'max_iter': [3000],
+        'max_iter': [10000],
         'solver': ['lbfgs', 'sgd', 'adam'],
         'activation': ['identity', 'logistic', 'tanh', 'relu'],
         'tol': [1e-3, 1e-4],
