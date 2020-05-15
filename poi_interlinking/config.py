@@ -147,8 +147,10 @@ class MLConf:
             'random_state': seed_no, 'n_jobs': n_jobs
         },
         'XGBoost': {
-            # basic
-            'n_estimators': 3000,
+            # default
+            # 'n_estimators': 3000,
+            # best
+            'max_delta_step': 2, 'max_depth': 5, 'n_estimators': 15, 'subsample': 0.5,
             'seed': seed_no, 'nthread': n_jobs
         },
         'MLP': {
@@ -203,7 +205,7 @@ class MLConf:
             'gamma': [1e-2, 1e-3, 1, 5, 10, 'scale'],
             'C': [0.01, 0.1, 1, 10, 25, 50, 100, 300],
             'max_iter': [3000],
-            'class_weight': ['balanced', {1: 2, 4: 1}, {1: 3, 4: 1}],
+            'class_weight': ['balanced', {0: 1, 1: 3}, {0: 1, 1: 5}],
         },
         {
             'kernel': ['poly'],
@@ -211,7 +213,7 @@ class MLConf:
             'gamma': ['scale', 'auto'],
             'C': [0.01, 0.1, 1, 10, 25, 50, 100],
             'max_iter': [3000],
-            'class_weight': ['balanced', {1: 2, 4: 1}, {1: 3, 4: 1}],
+            'class_weight': ['balanced', {0: 1, 1: 3}, {0: 1, 1: 5}],
         },
     ]
     DecisionTree_hyperparameters = {
@@ -220,30 +222,33 @@ class MLConf:
         'min_samples_leaf': [1, 2, 4, 10],
         'max_features': list(np.arange(2, 11, 2)) + ["sqrt", "log2"],
         'splitter': ['best', 'random'],
-        'class_weight': ['balanced', {1: 2, 4: 1}, {1: 3, 4: 1}],
+        'class_weight': ['balanced', {0: 1, 1: 3}, {0: 1, 1: 5}],
     }
     RandomForest_hyperparameters = {
         # 'bootstrap': [True, False],
-        'max_depth': [5, 10, 20, 30, 50, 70, 100],
-        "n_estimators": [100, 250, 500, 1000],
+        'max_depth': [100, 500, 1000, 1200, 1500, 2000],
+        "n_estimators": [50, 80, 100, 250, 500],
         'criterion': ['gini', 'entropy'],
-        # 'max_features': ['log2', 'sqrt'],  # auto is equal to sqrt
+        'max_features': ['log2', 'sqrt'],  # auto is equal to sqrt
         # 'min_samples_leaf': [1, 2, 4, 10],
-        'min_samples_split': [2, 3, 5, 10],
-        'class_weight': ['balanced', {1: 2, 4: 1}, {1: 3, 4: 1}],
+        'min_samples_split': [3, 5, 6, 8, 10],
+        'class_weight': ['balanced', {0: 1, 1: 3}, {0: 1, 1: 5}],
     }
     XGBoost_hyperparameters = {
-        "n_estimators": [100, 500, 1000, 3000],
-        'max_depth': [3, 5, 10, 30, 50, 70, 80, 100],
+        # "n_estimators": [50, 70, 100, 500, 1000, 3000],
+        # 'max_depth': [3, 5, 10, 30, 50, 70, 100],
+        "n_estimators": [5, 10, 15, 20, 50, 70, 100],
+        'max_depth': [2, 3, 5, 7, 8, 10, 20, 30],
         # hyperparameters to avoid overfitting
         # 'eta': list(np.linspace(0.01, 0.2, 10)),  # 'learning_rate'
         # 'gamma': [0, 1, 5],
-        'subsample': [0.8, 0.9, 1],
+        'subsample': [0.4, 0.5, 0.6, 0.7],
         # # Values from 0.3 to 0.8 if you have many columns (especially if you did one-hot encoding),
         # # or 0.8 to 1 if you only have a few columns
         # 'colsample_bytree': list(np.linspace(0.8, 1, 3)),
         # 'min_child_weight': [1, 5, 10],
-        'scale_pos_weight': [1, 2, 3],
+        # 'scale_pos_weight': [1, 2, 3, 5],
+        'max_delta_step': [1, 2, 3, 5],
     }
     MLP_hyperparameters = {
         'hidden_layer_sizes': [(100,), (50, 50,)],
