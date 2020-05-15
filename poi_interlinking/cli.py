@@ -45,15 +45,13 @@ def learn_params(train_set, sim_type, encoding):
     else: pm.learn_thres(train_set, sim_type)
 
 
-@cli.command('hyperparameter_tuning', help='tune various classifiers and select the best hyper-parameters on a '
-                                           'train dataset')
-@click.option('--train_set', default='dataset-string-similarity_global_1k.csv',
-              help='Train dataset to learn parameters.')
-@click.option('--test_set', default='dataset-string-similarity.txt', help='Test dataset to evaluate the models.')
+@cli.command('hyperparam_tuning', help='tune various classifiers and select the best hyper-parameters on a '
+                                       'train dataset')
+@click.option('--data_set', default='', help='the dataset to train/evaluate the models.')
 @click.option('--encoding', default='latin', show_default=True, type=click.Choice(['latin', 'global']),
               help='Specify the alphabet encoding of toponyms in dataset.')
-def hyperparams_learn(train_set, test_set, encoding):
-    core.StrategyEvaluator(encoding).hyperparamTuning(train_set, test_set)
+def hyperparams_learn(data_set, encoding):
+    core.StrategyEvaluator(encoding).hyperparamTuning(data_set)
 
 
 @cli.command('evaluate', help='')

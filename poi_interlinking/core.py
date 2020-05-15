@@ -24,55 +24,53 @@ class StrategyEvaluator:
     def __init__(self, encoding='latin'):
         self.encoding = encoding
 
-    def hyperparamTuning(self, train_data, test_data):
+    def hyperparamTuning(self, dataset):
         """A complete process of distinct steps in figuring out the best ML algorithm with best hyperparameters to
         toponym interlinking problem.
 
-        :param train_data: Relative path to the train dataset.
-        :type train_data: str
+        :param dataset: Relative path to the train dataset.
+        :type dataset: str
         :param test_data: Relative path to the test dataset.
         :type test_data: str
         """
         tot_time = time.time()
 
         LGMSimVars.per_metric_optValues = config.MLConf.sim_opt_params[self.encoding.lower()]
-        assert (os.path.isfile(os.path.join(config.default_data_path, train_data))), \
-            f'{train_data} dataset does not exist'
-        assert (os.path.isfile(os.path.join(config.default_data_path, test_data))), \
-            f'{test_data} dataset does not exist'
+        assert (os.path.isfile(os.path.join(config.default_data_path, dataset))), \
+            f'{dataset} dataset does not exist'
 
         f = Features()
         pt = hyperparam_tuning.ParamTuning()
 
         start_time = time.time()
-        f.load_data(os.path.join(config.default_data_path, train_data), self.encoding)
+        f.load_data(os.path.join(config.default_data_path, dataset), self.encoding)
         fX, y = f.build()
-        print("Loaded train dataset and build features for {} setup; {} sec.".format(
+        print("Loaded dataset and build features for {} setup; {} sec.".format(
             config.MLConf.classification_method, time.time() - start_time))
 
-        start_time = time.time()
-        # 1st phase: find out best classifier from a list of candidate ones
-        best_clf = pt.fineTuneClassifiers(fX, y)
-        print("Best classifier {} with hyperparams {} and score {}; {} sec.".format(
-            best_clf['classifier'], best_clf['hyperparams'], best_clf['score'], time.time() - start_time)
-        )
+        skf = StratifiedShuffleSplit(n_splits=1, random_state=config.seed_no, test_size=config.test_size)
+        for train_idxs, test_idxs in skf.split(fX, y):
+            fX_train, fX_test = fX[train_idxs], fX[test_idxs]
+            y_train, y_test = y[train_idxs], y[test_idxs]
 
-        start_time = time.time()
-        # 2nd phase: train the fine tuned best classifier on the whole train dataset (no folds)
-        estimator = pt.trainClassifier(fX, y, best_clf['estimator'])
-        print("Finished training model on the dataset; {} sec.".format(time.time() - start_time))
+            start_time = time.time()
+            # 1st phase: find out best classifier from a list of candidate ones
+            best_clf = pt.fineTuneClassifiers(fX_train, y_train)
+            print("Best classifier {} with hyperparams {} and score {}; {} sec.".format(
+                best_clf['classifier'], best_clf['hyperparams'], best_clf['score'], time.time() - start_time)
+            )
 
-        start_time = time.time()
-        f.load_data(os.path.join(config.default_data_path, test_data), self.encoding)
-        fX, y = f.build()
-        print("Loaded test dataset and build features; {} sec".format(time.time() - start_time))
+            start_time = time.time()
+            # 2nd phase: train the fine tuned best classifier on the whole train dataset (no folds)
+            estimator = pt.trainClassifier(fX_train, y_train, best_clf['estimator'])
+            print("Finished training model on the dataset; {} sec.".format(time.time() - start_time))
 
-        start_time = time.time()
-        # 3th phase: test the fine tuned best classifier on the test dataset
-        metrics = pt.testClassifier(fX, y, estimator)
+            # start_time = time.time()
+            # 3th phase: test the fine tuned best classifier on the test dataset
+            metrics = pt.testClassifier(fX_test, y_test, estimator)
 
-        res = dict(Classifier=best_clf['classifier'], **metrics, time=time.time() - start_time)
-        self._print_stats(res)
+            res = dict(Classifier=best_clf['classifier'], **metrics, time=time.time() - start_time)
+            self._print_stats(res)
 
         print("The whole process took {} sec.".format(time.time() - tot_time))
 
