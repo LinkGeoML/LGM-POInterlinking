@@ -131,6 +131,21 @@ def get_poi_poly_matches(poi_gdf, poly_gdf, idx, strategy):
 
 
 def get_distance(p1, p2):
+    """It finds the minimum distance between two Points
+
+    Parameters
+    ----------
+    p1 : shapely geometric object
+        The first point
+    p2 : shapely geometric object
+        The second point
+
+    Returns
+    -------
+    list
+        Returns the minimum distance. The value follows the geometric object projection.
+
+    """
     dist = 5000
     try:
         dist = min(dist, p1.distance(p2))
@@ -141,12 +156,35 @@ def get_distance(p1, p2):
 
 
 class Projection:
+    """Transform coordinates of a geometric object among specified projections"""
     def __init__(self, src='4326', dest='3857'):
+        """
+
+        Parameters
+        ----------
+        src : str
+            The current EPSG crs code.
+        dest : str
+            The target EPSG crs code.
+        """
         self.project = pyproj.Transformer.from_proj(
             pyproj.Proj(f'epsg:{src}'),  # source coordinate system
             pyproj.Proj(f'epsg:{dest}'))  # destination coordinate system
 
     def change_projection(self, lon, lat):
+        """Transforms the coordinates of a geometric object to the new projection.
+
+        Parameters
+        ----------
+        lon : float
+            The longitude of the geometric Point.
+        lat : float
+            The latitude of the geometric Point.
+
+        Returns
+        -------
+            A shapely Point on the new projection.
+        """
         p = Point(0, 0)
         try:
             p = transform(self.project.transform, Point(lon, lat))
