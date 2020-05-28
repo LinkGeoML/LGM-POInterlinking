@@ -42,25 +42,25 @@ fields/columns:
 The library implements the following distinct processes:
 
 #. Features extraction
-    The `build <https://linkgeoml.github.io/POI-Interlinking/features.html#poi_interlinking.processing.features.Features>`_
+    The `build <https://linkgeoml.github.io/POI-Interlinking/process.html#poi_interlinking.processing.features.Features>`_
     function constructs a set of training features to use within classifiers for toponym interlinking.
 
 #. Algorithm and model selection
     The functionality of the
-    `fineTuneClassifiers <https://linkgeoml.github.io/POI-Interlinking/tuning.html#poi_interlinking.learning.hyperparam_tuning.
+    `fineTuneClassifiers <https://linkgeoml.github.io/POI-Interlinking/learning.html#poi_interlinking.learning.hyperparam_tuning.
     ParamTuning.fineTuneClassifiers>`_ function is twofold.
     Firstly, it chooses among a list of supported machine learning algorithms the one that achieves the highest average
     accuracy score on the examined dataset. Secondly, it searches for the best model, i.e., the optimal hyper-parameters
     for the best identified algorithm in the first step.
 
 #. Model training
-    The `trainClassifier <https://linkgeoml.github.io/POI-Interlinking/tuning.html#poi_interlinking.learning.hyperparam_tuning.
+    The `trainClassifier <https://linkgeoml.github.io/POI-Interlinking/learning.html#poi_interlinking.learning.hyperparam_tuning.
     ParamTuning.trainClassifier>`_ trains the best selected model on previous
     process, i.e., an ML algorithm with tuned hyperparameters that best fits data, on the whole train dataset, without
     splitting it in folds.
 
 #. Model deployment
-    The `testClassifier <https://linkgeoml.github.io/POI-Interlinking/tuning.html#poi_interlinking.learning.hyperparam_tuning.
+    The `testClassifier <https://linkgeoml.github.io/POI-Interlinking/learning.html#poi_interlinking.learning.hyperparam_tuning.
     ParamTuning.testClassifier>`_ applies the trained model on new untested data.
 
 A complete pipeline of the above processes, i.e., features extraction, training and evaluating state-of-the-art
