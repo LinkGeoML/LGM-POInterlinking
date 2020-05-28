@@ -8,6 +8,17 @@ from poi_interlinking import config, helpers
 
 
 def extract_freqterms(fname, encoding, exp_path):
+    """Extract and count occurrences of all distinct terms found in ``fname`` file and sort them in descending order.
+
+    Parameters
+    ----------
+    fname : str
+        Input filename to search for optimal thresholds.
+    encoding : str
+        The encoding of the fname. Valid options are *latin* or *global*.
+    exp_path : str
+        Prefix to be used in naming the output file with the extracted frequent terms.
+    """
     pattern = re.compile("^[a-zA-Z]+")
 
     ngram_stats = {

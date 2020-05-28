@@ -1,0 +1,500 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>poi_interlinking.helpers &mdash; POI-Interlinking 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> POI-Interlinking
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../config.html">config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc.html">miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../learning.html">learning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../learning.html#hyperparameters">Hyperparameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../learning.html#similarity-thresholds-and-weights">Similarity thresholds and weights</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../pre_process.html">pre_processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../process.html">processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../process.html#features">Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../process.html#similarity-measures">Similarity measures</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../deploy.html">deployment</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">POI-Interlinking</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>poi_interlinking.helpers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+
+           <div itemprop="articleBody">
+            
+  <h1>Source code for poi_interlinking.helpers</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding= utf-8</span>
+<span class="c1"># Author: vkaff</span>
+<span class="c1"># E-mail: vkaffes@imis.athena-innovation.gr</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">text_unidecode</span> <span class="kn">import</span> <span class="n">unidecode</span>
+<span class="kn">import</span> <span class="nn">unicodedata</span>
+<span class="kn">import</span> <span class="nn">__main__</span>
+<span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">word_tokenize</span>
+<span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="kn">import</span> <span class="n">stopwords</span>
+<span class="kn">from</span> <span class="nn">nltk.stem.snowball</span> <span class="kn">import</span> <span class="n">SnowballStemmer</span>
+<span class="kn">import</span> <span class="nn">pycountry</span>
+<span class="kn">from</span> <span class="nn">langdetect</span> <span class="kn">import</span> <span class="n">detect</span><span class="p">,</span> <span class="n">lang_detect_exception</span>
+
+<span class="kn">from</span> <span class="nn">poi_interlinking</span> <span class="kn">import</span> <span class="n">config</span>
+<span class="kn">from</span> <span class="nn">poi_interlinking.processing</span> <span class="kn">import</span> <span class="n">sim_measures</span>
+
+
+<span class="n">punctuation_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;[‘’“”</span><span class="se">\&#39;</span><span class="s1">&quot;!?;/⧸⁄‹›«»`ʿ,.-]&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">strip_accents</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="s1">&#39;NFD&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="k">if</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">category</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">&#39;Mn&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">ascii_transliteration_and_punctuation_strip</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="c1"># NFKD: first applies a canonical decomposition, i.e., translates each character into its decomposed form.</span>
+    <span class="c1"># and afterwards apply the compatibility decomposition, i.e. replace all compatibility characters with their</span>
+    <span class="c1"># equivalents.</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="n">unidecode</span><span class="p">(</span><span class="n">strip_accents</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()))</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">punctuation_regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+
+<div class="viewcode-block" id="transform"><a class="viewcode-back" href="../../misc.html#poi_interlinking.helpers.transform">[docs]</a><span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">sorting</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">canonical</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">simple_sorting</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    s1: str</span>
+<span class="sd">        The first string.</span>
+<span class="sd">    s2: str</span>
+<span class="sd">        The second string.</span>
+<span class="sd">    sorting: bool</span>
+<span class="sd">        A boolean flag whether to perform a custom mechanism of sorting or not. Specifically, an alphanumerical</span>
+<span class="sd">        sorting applies only when the strings similarity is below the :attr:`~poi_interlinking.config.sort_thres`.</span>
+<span class="sd">        If ``True`` and ``simple_sorting`` is ``False``, then perform the custom type of sorting.</span>
+<span class="sd">    canonical: bool</span>
+<span class="sd">        A boolean flag whether to perform canonical decomposition, i.e., translates each character into its decomposed</span>
+<span class="sd">        form and afterwards apply the compatibility decomposition, i.e. replace all compatibility characters with their</span>
+<span class="sd">        equivalents.sorting or not.</span>
+<span class="sd">    delimiter: str</span>
+<span class="sd">        Character used to split s1 and s2.</span>
+<span class="sd">    simple_sorting: bool</span>
+<span class="sd">        If ``True`` apply alphanumeric sorting on s1 and s2.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    s1, s2: str</span>
+<span class="sd">        The transformed strings according to the selected parameters, e.g., `canonical`, `sorting` or `simple_sorting`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># a = six.text_type(s1) #.lower()</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">s1</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">s2</span>
+
+    <span class="n">thres</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">sort_thres</span>
+
+    <span class="k">if</span> <span class="n">canonical</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">ascii_transliteration_and_punctuation_strip</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">ascii_transliteration_and_punctuation_strip</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">simple_sorting</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sorted_nicely</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">delimiter</span><span class="p">)))</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sorted_nicely</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">delimiter</span><span class="p">)))</span>
+    <span class="k">elif</span> <span class="n">sorting</span><span class="p">:</span>
+        <span class="n">tmp_a</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">tmp_b</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sim_measures</span><span class="p">,</span> <span class="s1">&#39;damerau_levenshtein&#39;</span><span class="p">)(</span><span class="n">tmp_a</span><span class="p">,</span> <span class="n">tmp_b</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">thres</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sorted_nicely</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">delimiter</span><span class="p">)))</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sorted_nicely</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">delimiter</span><span class="p">)))</span>
+        <span class="k">elif</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sim_measures</span><span class="p">,</span> <span class="s1">&#39;damerau_levenshtein&#39;</span><span class="p">)(</span><span class="n">tmp_a</span><span class="p">,</span> <span class="n">tmp_b</span><span class="p">)</span> <span class="o">&gt;</span> \
+                <span class="nb">getattr</span><span class="p">(</span><span class="n">sim_measures</span><span class="p">,</span> <span class="s1">&#39;damerau_levenshtein&#39;</span><span class="p">)(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">tmp_a</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">tmp_b</span>
+
+    <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span></div>
+
+
+<div class="viewcode-block" id="sorted_nicely"><a class="viewcode-back" href="../../misc.html#poi_interlinking.helpers.sorted_nicely">[docs]</a><span class="k">def</span> <span class="nf">sorted_nicely</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Sorts the given iterable in the way that is expected.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    l: :obj:`list` or :obj:`set` of str</span>
+<span class="sd">        The iterable to be sorted.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">    :obj:`list`</span>
+<span class="sd">        A sorted list of strs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">convert</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">text</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="n">text</span>
+    <span class="n">alphanum_key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="p">[</span><span class="n">convert</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;([0-9]+)&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">alphanum_key</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">get_langnm</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">lang_detect</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">lname</span> <span class="o">=</span> <span class="s1">&#39;english&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">lname</span> <span class="o">=</span> <span class="n">pycountry</span><span class="o">.</span><span class="n">languages</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">alpha_2</span><span class="o">=</span><span class="n">detect</span><span class="p">(</span><span class="n">s</span><span class="p">))</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="n">lang_detect</span> <span class="k">else</span> <span class="s1">&#39;english&#39;</span>
+    <span class="k">except</span> <span class="n">lang_detect_exception</span><span class="o">.</span><span class="n">LangDetectException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">lname</span>
+
+
+<span class="c1"># Clean the string from stopwords based on language detections feature</span>
+<span class="c1"># Returned values #1: non-stopped words, #2: stopped words</span>
+<span class="k">def</span> <span class="nf">normalize_str</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">lang_detect</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">lname</span> <span class="o">=</span> <span class="n">get_langnm</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">lang_detect</span><span class="p">)</span>
+    <span class="n">stemmer</span> <span class="o">=</span> <span class="n">SnowballStemmer</span><span class="p">(</span><span class="n">lname</span><span class="p">)</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="n">word_tokenize</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="c1"># words = [word.lower() for word in tokens if word.isalpha()]</span>
+    <span class="n">stopwords_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="n">lname</span><span class="p">))</span>
+
+    <span class="n">stopped_words</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">token</span><span class="p">:</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">stopwords_set</span><span class="p">,</span> <span class="n">tokens</span><span class="p">))</span>
+    <span class="n">filtered_words</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">token</span><span class="p">:</span> <span class="n">token</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stopped_words</span><span class="p">,</span> <span class="n">tokens</span><span class="p">))</span>
+    <span class="n">filtered_stemmed_words</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">token</span><span class="p">:</span> <span class="n">stemmer</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">token</span><span class="p">),</span> <span class="n">filtered_words</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">filtered_words</span><span class="p">,</span> <span class="n">filtered_stemmed_words</span><span class="p">,</span> <span class="n">stopped_words</span>
+
+
+<span class="k">def</span> <span class="nf">getBasePath</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__main__</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">StaticValues</span><span class="p">:</span>
+    <span class="c1"># sim_features_cols = [</span>
+    <span class="c1">#     &quot;Damerau-Levenshtein&quot;,</span>
+    <span class="c1">#     &quot;Jaro&quot;,</span>
+    <span class="c1">#     &quot;Jaro-Winkler&quot;,</span>
+    <span class="c1">#     &quot;Jaro-Winkler reversed&quot;,</span>
+    <span class="c1">#     &quot;Sorted Jaro-Winkler&quot;,</span>
+    <span class="c1">#     # &quot;Permuted Jaro-Winkler&quot;,</span>
+    <span class="c1">#     &quot;Cosine N-grams&quot;,</span>
+    <span class="c1">#     &quot;Jaccard N-grams&quot;,</span>
+    <span class="c1">#     &quot;Dice bigrams&quot;,</span>
+    <span class="c1">#     &quot;Jaccard skipgrams&quot;,</span>
+    <span class="c1">#     &quot;Monge-Elkan&quot;,</span>
+    <span class="c1">#     &quot;Soft-Jaccard&quot;,</span>
+    <span class="c1">#     &quot;Davis and De Salles&quot;,</span>
+    <span class="c1">#     &quot;Damerau-Levenshtein Sorted&quot;,</span>
+    <span class="c1">#     &quot;Jaro Sorted&quot;,</span>
+    <span class="c1">#     &quot;Jaro-Winkler Sorted&quot;,</span>
+    <span class="c1">#     &quot;Jaro-Winkler reversed Sorted&quot;,</span>
+    <span class="c1">#     # &quot;Sorted Jaro-Winkler Sorted&quot;,</span>
+    <span class="c1">#     # &quot;Permuted Jaro-Winkler Sorted&quot;,</span>
+    <span class="c1">#     &quot;Cosine N-grams Sorted&quot;,</span>
+    <span class="c1">#     &quot;Jaccard N-grams Sorted&quot;,</span>
+    <span class="c1">#     &quot;Dice bigrams Sorted&quot;,</span>
+    <span class="c1">#     &quot;Jaccard skipgrams Sorted&quot;,</span>
+    <span class="c1">#     &quot;Monge-Elkan Sorted&quot;,</span>
+    <span class="c1">#     &quot;Soft-Jaccard Sorted&quot;,</span>
+    <span class="c1">#     &quot;Davis and De Salles Sorted&quot;,</span>
+    <span class="c1">#     &quot;LinkGeoML Jaro-Winkler&quot;,</span>
+    <span class="c1">#     &quot;LinkGeoML Jaro-Winkler reversed&quot;,</span>
+    <span class="c1">#     # &quot;LSimilarity&quot;,</span>
+    <span class="c1">#     &quot;LSimilarity_wavg&quot;,</span>
+    <span class="c1">#     # &quot;LSimilarity_davies&quot;,</span>
+    <span class="c1">#     # &quot;LSimilarity_skipgram&quot;,</span>
+    <span class="c1">#     # &quot;LSimilarity_soft_jaccard&quot;,</span>
+    <span class="c1">#     # &quot;LSimilarity_strike_a_match&quot;,</span>
+    <span class="c1">#     # &quot;LSimilarity_cosine&quot;,</span>
+    <span class="c1">#     # &quot;LSimilarity_monge_elkan&quot;,</span>
+    <span class="c1">#     # &quot;LSimilarity_jaro_winkler&quot;,</span>
+    <span class="c1">#     # &quot;LSimilarity_jaro&quot;,</span>
+    <span class="c1">#     # &quot;LSimilarity_jaro_winkler_reversed&quot;,</span>
+    <span class="c1">#     &quot;LSimilarity_davies_wavg&quot;,</span>
+    <span class="c1">#     &quot;LSimilarity_skipgram_wavg&quot;,</span>
+    <span class="c1">#     &quot;LSimilarity_soft_jaccard_wavg&quot;,</span>
+    <span class="c1">#     &quot;LSimilarity_strike_a_match_wavg&quot;,</span>
+    <span class="c1">#     &quot;LSimilarity_cosine_wavg&quot;,</span>
+    <span class="c1">#     &quot;LSimilarity_jaccard_wavg&quot;,</span>
+    <span class="c1">#     &quot;LSimilarity_monge_elkan_wavg&quot;,</span>
+    <span class="c1">#     &quot;LSimilarity_jaro_winkler_wavg&quot;,</span>
+    <span class="c1">#     &quot;LSimilarity_jaro_wavg&quot;,</span>
+    <span class="c1">#     &quot;LSimilarity_jaro_winkler_reversed_wavg&quot;,</span>
+    <span class="c1">#     &quot;LSimilarity_l_jaro_winkler_wavg&quot;,</span>
+    <span class="c1">#     &quot;LSimilarity_l_jaro_winkler_reversed_wavg&quot;,</span>
+    <span class="c1">#     # &quot;LSimilarity_baseScore&quot;,</span>
+    <span class="c1">#     # &quot;LSimilarity_mismatchScore&quot;,</span>
+    <span class="c1">#     # &quot;LSimilarity_specialScore&quot;,</span>
+    <span class="c1">#     &quot;Avg LSimilarity_baseScore&quot;,</span>
+    <span class="c1">#     &quot;Avg LSimilarity_mismatchScore&quot;,</span>
+    <span class="c1">#     &quot;Avg LSimilarity_specialScore&quot;,</span>
+    <span class="c1">#     # non metric features</span>
+    <span class="c1">#     # &quot;contains_str1&quot;,</span>
+    <span class="c1">#     # &quot;contains_str2&quot;,</span>
+    <span class="c1">#     # &quot;WordsNo_str1&quot;,</span>
+    <span class="c1">#     # &quot;WordsNo_str2&quot;,</span>
+    <span class="c1">#     # &quot;dashed_str1&quot;,</span>
+    <span class="c1">#     # &quot;dashed_str2&quot;,</span>
+    <span class="c1">#     # &quot;hasFreqTerm_str1&quot;,</span>
+    <span class="c1">#     # &quot;hasFreqTerm_str2&quot;,</span>
+    <span class="c1">#     # &quot;posOfHigherSim_str1_start&quot;,</span>
+    <span class="c1">#     # &quot;posOfHigherSim_str1_middle&quot;,</span>
+    <span class="c1">#     # &quot;posOfHigherSim_str1_end&quot;,</span>
+    <span class="c1">#     # &quot;posOfHigherSim_str2_start&quot;,</span>
+    <span class="c1">#     # &quot;posOfHigherSim_str2_middle&quot;,</span>
+    <span class="c1">#     # &quot;posOfHigherSim_str2_end&quot;,</span>
+    <span class="c1"># ]</span>
+
+    <span class="n">sim_features_cols</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;Damerau_Levenshtein&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Jaro&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Jaro_Winkler&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Jaro_Winkler_reversed&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Jaro_Winkler_sorted&quot;</span><span class="p">,</span>
+        <span class="c1"># &quot;Permuted Jaro-Winkler&quot;,</span>
+        <span class="s2">&quot;Cosine_ngrams&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Jaccard_ngrams&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Dice_bigrams&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Jaccard_skipgrams&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Monge_Elkan&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Soft_Jaccard&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Davis_and_De_Salles&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Tuned_Jaro_Winkler&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Tuned_Jaro_Winkler_reversed&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="n">individual_lgm_feature_cols</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;LGM_baseScore&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;LGM_mismatchScore&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;LGM_specialScore&quot;</span><span class="p">,</span>
+
+    <span class="p">]</span>
+
+    <span class="n">spatial_feature_cols</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;point_dist&#39;</span>
+    <span class="p">]</span>
+
+    <span class="n">address_feature_cols</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;street_numbers_diff&#39;</span><span class="p">,</span>
+    <span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">_on_street_names&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sim_features_cols</span><span class="p">]</span>
+
+    <span class="n">final_cols</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">sim_metrics</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;damerau_levenshtein&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;basic&#39;</span><span class="p">,</span> <span class="s1">&#39;sorted&#39;</span><span class="p">,</span> <span class="s1">&#39;lgm&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;jaro&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;basic&#39;</span><span class="p">,</span> <span class="s1">&#39;sorted&#39;</span><span class="p">,</span> <span class="s1">&#39;lgm&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;jaro_winkler&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;basic&#39;</span><span class="p">,</span> <span class="s1">&#39;sorted&#39;</span><span class="p">,</span> <span class="s1">&#39;lgm&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;jaro_winkler_reversed&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;basic&#39;</span><span class="p">,</span> <span class="s1">&#39;sorted&#39;</span><span class="p">,</span> <span class="s1">&#39;lgm&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;sorted_winkler&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;basic&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;permuted_winkler&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;cosine&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;basic&#39;</span><span class="p">,</span> <span class="s1">&#39;sorted&#39;</span><span class="p">,</span> <span class="s1">&#39;lgm&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;jaccard&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;basic&#39;</span><span class="p">,</span> <span class="s1">&#39;sorted&#39;</span><span class="p">,</span> <span class="s1">&#39;lgm&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;strike_a_match&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;basic&#39;</span><span class="p">,</span> <span class="s1">&#39;sorted&#39;</span><span class="p">,</span> <span class="s1">&#39;lgm&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;skipgram&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;basic&#39;</span><span class="p">,</span> <span class="s1">&#39;sorted&#39;</span><span class="p">,</span> <span class="s1">&#39;lgm&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;monge_elkan&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;basic&#39;</span><span class="p">,</span> <span class="s1">&#39;sorted&#39;</span><span class="p">,</span> <span class="s1">&#39;lgm&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;soft_jaccard&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;basic&#39;</span><span class="p">,</span> <span class="s1">&#39;sorted&#39;</span><span class="p">,</span> <span class="s1">&#39;lgm&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;davies&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;basic&#39;</span><span class="p">,</span> <span class="s1">&#39;sorted&#39;</span><span class="p">,</span> <span class="s1">&#39;lgm&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;tuned_jaro_winkler&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;basic&#39;</span><span class="p">,</span> <span class="s1">&#39;sorted&#39;</span><span class="p">,</span> <span class="s1">&#39;lgm&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;tuned_jaro_winkler_reversed&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;basic&#39;</span><span class="p">,</span> <span class="s1">&#39;sorted&#39;</span><span class="p">,</span> <span class="s1">&#39;lgm&#39;</span><span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim_type</span><span class="o">=</span><span class="s1">&#39;basic&#39;</span><span class="p">):</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_cols</span><span class="p">[:]</span>
+
+        <span class="k">if</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s1">&#39;lgm&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">final_cols</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">address_feature_cols</span> <span class="o">+</span> <span class="p">[</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s1">_on_street_names&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Sorted&#39;</span><span class="p">,</span> <span class="s1">&#39;LGM&#39;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_features_cols</span> <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;jaro_winkler_sorted&#39;</span>
+            <span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">final_cols</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">_on_street_names&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">individual_lgm_feature_cols</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">final_cols</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_features_cols</span> <span class="o">+</span> <span class="p">[</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Sorted&#39;</span><span class="p">,</span> <span class="s1">&#39;LGM&#39;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_features_cols</span> <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;jaro_winkler_sorted&#39;</span>
+            <span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">final_cols</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">individual_lgm_feature_cols</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">final_cols</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatial_feature_cols</span>
+        <span class="k">elif</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s1">&#39;sorted&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">final_cols</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">address_feature_cols</span> <span class="o">+</span> <span class="p">[</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s1">_on_street_names&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Sorted&#39;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_features_cols</span> <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;jaro_winkler_sorted&#39;</span>
+            <span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">final_cols</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_features_cols</span> <span class="o">+</span> <span class="p">[</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Sorted&#39;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_features_cols</span> <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;jaro_winkler_sorted&#39;</span>
+            <span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">final_cols</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatial_feature_cols</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># basic or whatever</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">final_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">address_feature_cols</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_features_cols</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatial_feature_cols</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+	<a href="https://github.com/LinkGeoML/POI-Interlinking">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub">
+    </a>
+
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Vassilis Kaffes
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

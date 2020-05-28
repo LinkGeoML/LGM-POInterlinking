@@ -153,22 +153,22 @@ class Features:
         this method builds an ndarray of the following groups of features:
 
         * *basic*: various similarity measures, i.e.,
-          :func:`~poi_interlinking.sim_measures.damerau_levenshtein`,
-          :func:`~poi_interlinking.sim_measures.jaro`,
-          :func:`~poi_interlinking.sim_measures.jaro_winkler` and the reversed one,
-          :func:`~poi_interlinking.sim_measures.sorted_winkler`,
-          :func:`~poi_interlinking.sim_measures.cosine`,
-          :func:`~poi_interlinking.sim_measures.jaccard`,
-          :func:`~poi_interlinking.sim_measures.strike_a_match`,
-          :func:`~poi_interlinking.sim_measures.monge_elkan`,
-          :func:`~poi_interlinking.sim_measures.soft_jaccard`,
-          :func:`~poi_interlinking.sim_measures.davies`,
-          :func:`~poi_interlinking.sim_measures.tuned_jaro_winkler` and the reversed one,
-          :func:`~poi_interlinking.sim_measures.skipgrams`.
+          :func:`~poi_interlinking.processing.sim_measures.damerau_levenshtein`,
+          :func:`~poi_interlinking.processing.sim_measures.jaro`,
+          :func:`~poi_interlinking.processing.sim_measures.jaro_winkler` and the reversed one,
+          :func:`~poi_interlinking.processing.sim_measures.sorted_winkler`,
+          :func:`~poi_interlinking.processing.sim_measures.cosine`,
+          :func:`~poi_interlinking.processing.sim_measures.jaccard`,
+          :func:`~poi_interlinking.processing.sim_measures.strike_a_match`,
+          :func:`~poi_interlinking.processing.sim_measures.monge_elkan`,
+          :func:`~poi_interlinking.processing.sim_measures.soft_jaccard`,
+          :func:`~poi_interlinking.processing.sim_measures.davies`,
+          :func:`~poi_interlinking.processing.sim_measures.tuned_jaro_winkler` and the reversed one,
+          :func:`~poi_interlinking.processing.sim_measures.skipgrams`.
         * *basic_sorted*: sorted versions of similarity measures utilized in *basic* group, except for the
-          :func:`~poi_interlinking.sim_measures.sorted_winkler`.
+          :func:`~poi_interlinking.processing.sim_measures.sorted_winkler`.
         * *lgm*: LGM-Sim variations that integrate, as internal, the similarity measures utilized in *basic* group,
-          except for the :func:`~poi_interlinking.sim_measures.sorted_winkler`.
+          except for the :func:`~poi_interlinking.processing.sim_measures.sorted_winkler`.
 
         Parameters
         ----------

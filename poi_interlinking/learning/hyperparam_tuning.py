@@ -58,7 +58,7 @@ class ParamTuning:
         achieves the best avg accuracy score for all evaluations. The supported search methods are:
 
         * *GridSearchCV*: Exhaustive search over specified parameter values for supported estimators.
-          The following variables are defined in :func:`~poi_interlinking.config.MLConf` :
+          The following variables are defined in :class:`~poi_interlinking.config.MLConf` :
 
          * :attr:`~poi_interlinking.config.MLConf.MLP_hyperparameters`
          * :attr:`~poi_interlinking.config.MLConf.RandomForests_hyperparameters`
@@ -68,7 +68,7 @@ class ParamTuning:
 
         * *RandomizedSearchCV*: Randomized search over continuous distribution space. :attr:`~poi_interlinking.config.MLConf.max_iter`
           defines the number of parameter settings that are sampled. :py:attr:`~poi_interlinking.config.MLConf.max_iter` trades off
-          runtime vs quality of the solution. The following variables are defined in :func:`~poi_interlinking.config.MLConf` :
+          runtime vs quality of the solution. The following variables are defined in :class:`~poi_interlinking.config.MLConf` :
 
          * :attr:`~poi_interlinking.config.MLConf.MLP_hyperparameters_dist`
          * :attr:`~poi_interlinking.config.MLConf.RandomForests_hyperparameters_dist`

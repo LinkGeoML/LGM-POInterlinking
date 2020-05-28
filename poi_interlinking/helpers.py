@@ -34,10 +34,38 @@ def ascii_transliteration_and_punctuation_strip(s):
     return s
 
 
-def transform(s1, s2, sorting=False, canonical=False, delimiter=' ', thres=config.sort_thres, simple_sorting=False):
+def transform(s1, s2, sorting=False, canonical=False, delimiter=' ', simple_sorting=False):
+    """
+
+    Parameters
+    ----------
+    s1: str
+        The first string.
+    s2: str
+        The second string.
+    sorting: bool
+        A boolean flag whether to perform a custom mechanism of sorting or not. Specifically, an alphanumerical
+        sorting applies only when the strings similarity is below the :attr:`~poi_interlinking.config.sort_thres`.
+        If ``True`` and ``simple_sorting`` is ``False``, then perform the custom type of sorting.
+    canonical: bool
+        A boolean flag whether to perform canonical decomposition, i.e., translates each character into its decomposed
+        form and afterwards apply the compatibility decomposition, i.e. replace all compatibility characters with their
+        equivalents.sorting or not.
+    delimiter: str
+        Character used to split s1 and s2.
+    simple_sorting: bool
+        If ``True`` apply alphanumeric sorting on s1 and s2.
+
+    Returns
+    -------
+    s1, s2: str
+        The transformed strings according to the selected parameters, e.g., `canonical`, `sorting` or `simple_sorting`.
+    """
     # a = six.text_type(s1) #.lower()
     a = s1
     b = s2
+
+    thres = config.sort_thres
 
     if canonical:
         a = ascii_transliteration_and_punctuation_strip(a)
@@ -64,9 +92,15 @@ def transform(s1, s2, sorting=False, canonical=False, delimiter=' ', thres=confi
 def sorted_nicely(l):
     """ Sorts the given iterable in the way that is expected.
 
-    Required arguments:
-    l -- The iterable to be sorted.
+    Parameters
+    ----------
+    l: :obj:`list` or :obj:`set` of str
+        The iterable to be sorted.
 
+    Returns
+    --------
+    :obj:`list`
+        A sorted list of strs
     """
     convert = lambda text: int(text) if text.isdigit() else text
     alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]

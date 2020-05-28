@@ -25,13 +25,11 @@ class StrategyEvaluator:
         self.encoding = encoding
 
     def hyperparamTuning(self, dataset):
-        """A complete process of distinct steps in figuring out the best ML algorithm with best hyperparameters to
-        toponym interlinking problem.
+        """A complete process of distinct steps in figuring out the best ML algorithm with optimal hyperparameters that
+        fit the ``dataset`` for the toponym interlinking problem.
 
-        :param dataset: Relative path to the train dataset.
+        :param dataset: Name of the dataset to use for training and evaluating various classifiers.
         :type dataset: str
-        :param test_data: Relative path to the test dataset.
-        :type test_data: str
         """
         tot_time = time.time()
 
@@ -75,7 +73,10 @@ class StrategyEvaluator:
         print("The whole process took {} sec.".format(time.time() - tot_time))
 
     def evaluate(self, dataset):
-        """Train and evaluate selected ML algorithms with custom hyper-parameters on dataset.
+        """Train and evaluate supported ML algorithms with custom hyper-parameters on dataset.
+
+        :param dataset: Name of the dataset to use for training and evaluating various classifiers.
+        :type dataset: str
         """
         tot_time = time.time()
 

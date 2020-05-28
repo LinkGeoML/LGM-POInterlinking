@@ -9,7 +9,7 @@ developed by Rui Santos and Alexandre Marinho for their work in
 `Toponym-Matching <https://github.com/ruipds/Toponym-Matching/blob/master/datasetcreator.py>`_.
 """
 
-# Python 2 and 3
+# Python 3
 import six
 
 import csv
@@ -777,7 +777,7 @@ def _jaro_winkler(ying, yang, long_tolerance, winklerize):
 
 
 def tuned_jaro_winkler(s1, s2, long_tolerance=False):
-    """Implements LGM Jaro-Winkler metric.
+    """Implements Tuned Jaro-Winkler metric.
 
     str1, str2: str
         Input values in unicode.
@@ -891,6 +891,7 @@ def score_per_term(base_t, mis_t, special_t, metric):
     metric: str
         Indicates the metric to utilize in order to calculate the similarity score by comparing individually the
         three lists.
+
     Returns
     -------
     tuple of (float, float, float)
@@ -1010,7 +1011,7 @@ def lgm_sim(str1, str2, metric='damerau_levenshtein', avg=False):
     metric: str, optional
         Similarity metric used, as internal one, to split toponyms in the two distinct lists that contains base and
         mismatch terms respectively. Each of the above supported metrics can be used as input.
-        Default metric is :attr:`~poi_interlinking.sim_measures.damerau_levenshtein`.
+        Default metric is :attr:`damerau_levenshtein`.
     avg: bool, optional
         If value is True, the three individual similarity scores (for each term list) are properly weighted, otherwise
         each term list' score is of equal significance to the final score. Default value is False.
@@ -1039,7 +1040,7 @@ def avg_lgm_sim(str1, str2, metric='damerau_levenshtein'):
     metric: str, optional
         Similarity metric used, as internal one, to split toponyms in the two distinct lists that contains base and
         mismatch terms respectively. Each of the above supported metrics can be used as input.
-        Default metric is :attr:`~poi_interlinking.sim_measures.damerau_levenshtein`.
+        Default metric is :attr:`damerau_levenshtein`.
 
     Returns
     -------

@@ -2,7 +2,7 @@
 # E-mail: vkaffes@imis.athena-innovation.gr
 
 import numpy as np
-from scipy.stats import randint as sp_randint, expon, truncnorm, uniform
+from scipy.stats import randint as sp_randint, expon, truncnorm
 
 
 default_data_path = 'data'
@@ -70,7 +70,9 @@ class MLConf:
     :vartype XGBoost_hyperparameters_dist: :obj:`dict`
     """
 
-    kfold_no = 5  #: int: The number of outer folds that splits the dataset for the k-fold cross-validation.
+    kfold_no = 5
+    """int: The number of outer folds that splits the dataset for the k-fold cross-validation.
+    """
 
     #: int: The number of inner folds that splits the dataset for the k-fold cross-validation.
     kfold_inner_parameter = 4
@@ -82,7 +84,7 @@ class MLConf:
 
     See Also
     --------
-    :class:`~interlinking.featuresConstruction.Features`. Details on available inputs.    
+    :class:`~poi_interlinking.processing.features.Features` : Details on the supported groups.
     """
 
     # accepted values: randomized, grid, hyperband - not yet implemented!!!
@@ -90,12 +92,12 @@ class MLConf:
     """str: Search Method to use for finding best hyperparameters. (*randomized* | *grid*).
     
     See Also
-    --------
-    :func:`~interlinking.param_tuning.ParamTuning.getBestClassifier`, :func:`~interlinking.param_tuning.ParamTuning.fineTuneClassifier` 
-    Details on available inputs.       
+    --------     
+    :meth:`~poi_interlinking.learning.hyperparam_tuning.ParamTuning.fineTuneClassifiers` : Details on the
+        supported methods.        
     """
-    #: int: Number of iterations that RandomizedSearchCV should execute. It applies only when :class:`hyperparams_
-    #: search_method` equals to 'randomized'.
+    #: int: Number of iterations that RandomizedSearchCV should execute. It applies only when
+    #: :attr:`hyperparams_search_method` equals to 'randomized'.
     max_iter = 250
 
     classifiers = [
@@ -133,7 +135,7 @@ class MLConf:
         },
         'DecisionTree': {
             # default
-            'max_depth': 100, 'max_features': 'auto',
+            # 'max_depth': 100, 'max_features': 'auto',
             # best
             'class_weight': {0: 1, 1: 3}, 'max_depth': 50, 'max_features': 8, 'min_samples_leaf': 10,
             'min_samples_split': 10, 'splitter': 'best',

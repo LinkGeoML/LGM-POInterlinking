@@ -1,0 +1,641 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>processing &mdash; POI-Interlinking 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="deployment" href="deploy.html" />
+    <link rel="prev" title="pre_processing" href="pre_process.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> POI-Interlinking
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="config.html">config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="misc.html">miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="learning.html">learning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="learning.html#hyperparameters">Hyperparameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning.html#similarity-thresholds-and-weights">Similarity thresholds and weights</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pre_process.html">pre_processing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#features">Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#similarity-measures">Similarity measures</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="deploy.html">deployment</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">POI-Interlinking</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>processing</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/process.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+
+           <div itemprop="articleBody">
+            
+  <div class="section" id="processing">
+<h1>processing<a class="headerlink" href="#processing" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="py class">
+<dt id="poi_interlinking.processing.features.Features">
+<em class="property">class </em><code class="sig-prename descclassname">poi_interlinking.processing.features.</code><code class="sig-name descname">Features</code><a class="reference internal" href="_modules/poi_interlinking/processing/features.html#Features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.features.Features" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class loads the dataset, frequent terms and builds features that are used as input to supported classification
+groups:</p>
+<ul class="simple">
+<li><p><em>basic</em>: similarity features based on basic similarity measures.</p></li>
+<li><p><em>basic_sorted</em>: similarity features based on sorted version of the basic similarity measures used in <em>basic</em> group.</p></li>
+<li><p><em>lgm</em>: similarity features based on variations of LGM-Sim similarity measures.</p></li>
+</ul>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#poi_interlinking.processing.features.Features.compute_features" title="poi_interlinking.processing.features.Features.compute_features"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_features()</span></code></a></dt><dd><p>Details on the metrics each classification group implements.</p>
+</dd>
+</dl>
+</div>
+<dl class="py method">
+<dt id="poi_interlinking.processing.features.Features.build">
+<code class="sig-name descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/features.html#Features.build"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.features.Features.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build features depending on the assignment of parameter <a class="reference internal" href="config.html#poi_interlinking.config.MLConf.classification_method" title="poi_interlinking.config.MLConf.classification_method"><code class="xref py py-attr docutils literal notranslate"><span class="pre">classification_method</span></code></a>
+and return values (fX, y) as ndarray of floats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>fX</strong> (<em>ndarray</em>) – The computed features that will be used as input to ML classifiers.</p></li>
+<li><p><strong>y</strong> (<em>ndarray</em>) – Binary labels {True, False} to train the classifiers.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="poi_interlinking.processing.features.Features.compute_features">
+<code class="sig-name descname">compute_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s1</span></em>, <em class="sig-param"><span class="n">s2</span></em>, <em class="sig-param"><span class="n">sorted</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">lgm_sims</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/features.html#Features.compute_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.features.Features.compute_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>Depending on the group assigned to parameter <a class="reference internal" href="config.html#poi_interlinking.config.MLConf.classification_method" title="poi_interlinking.config.MLConf.classification_method"><code class="xref py py-attr docutils literal notranslate"><span class="pre">classification_method</span></code></a>,
+this method builds an ndarray of the following groups of features:</p>
+<ul class="simple">
+<li><p><em>basic</em>: various similarity measures, i.e.,
+<a class="reference internal" href="#poi_interlinking.processing.sim_measures.damerau_levenshtein" title="poi_interlinking.processing.sim_measures.damerau_levenshtein"><code class="xref py py-func docutils literal notranslate"><span class="pre">damerau_levenshtein()</span></code></a>,
+<a class="reference internal" href="#poi_interlinking.processing.sim_measures.jaro" title="poi_interlinking.processing.sim_measures.jaro"><code class="xref py py-func docutils literal notranslate"><span class="pre">jaro()</span></code></a>,
+<a class="reference internal" href="#poi_interlinking.processing.sim_measures.jaro_winkler" title="poi_interlinking.processing.sim_measures.jaro_winkler"><code class="xref py py-func docutils literal notranslate"><span class="pre">jaro_winkler()</span></code></a> and the reversed one,
+<a class="reference internal" href="#poi_interlinking.processing.sim_measures.sorted_winkler" title="poi_interlinking.processing.sim_measures.sorted_winkler"><code class="xref py py-func docutils literal notranslate"><span class="pre">sorted_winkler()</span></code></a>,
+<a class="reference internal" href="#poi_interlinking.processing.sim_measures.cosine" title="poi_interlinking.processing.sim_measures.cosine"><code class="xref py py-func docutils literal notranslate"><span class="pre">cosine()</span></code></a>,
+<a class="reference internal" href="#poi_interlinking.processing.sim_measures.jaccard" title="poi_interlinking.processing.sim_measures.jaccard"><code class="xref py py-func docutils literal notranslate"><span class="pre">jaccard()</span></code></a>,
+<a class="reference internal" href="#poi_interlinking.processing.sim_measures.strike_a_match" title="poi_interlinking.processing.sim_measures.strike_a_match"><code class="xref py py-func docutils literal notranslate"><span class="pre">strike_a_match()</span></code></a>,
+<a class="reference internal" href="#poi_interlinking.processing.sim_measures.monge_elkan" title="poi_interlinking.processing.sim_measures.monge_elkan"><code class="xref py py-func docutils literal notranslate"><span class="pre">monge_elkan()</span></code></a>,
+<a class="reference internal" href="#poi_interlinking.processing.sim_measures.soft_jaccard" title="poi_interlinking.processing.sim_measures.soft_jaccard"><code class="xref py py-func docutils literal notranslate"><span class="pre">soft_jaccard()</span></code></a>,
+<a class="reference internal" href="#poi_interlinking.processing.sim_measures.davies" title="poi_interlinking.processing.sim_measures.davies"><code class="xref py py-func docutils literal notranslate"><span class="pre">davies()</span></code></a>,
+<a class="reference internal" href="#poi_interlinking.processing.sim_measures.tuned_jaro_winkler" title="poi_interlinking.processing.sim_measures.tuned_jaro_winkler"><code class="xref py py-func docutils literal notranslate"><span class="pre">tuned_jaro_winkler()</span></code></a> and the reversed one,
+<code class="xref py py-func docutils literal notranslate"><span class="pre">skipgrams()</span></code>.</p></li>
+<li><p><em>basic_sorted</em>: sorted versions of similarity measures utilized in <em>basic</em> group, except for the
+<a class="reference internal" href="#poi_interlinking.processing.sim_measures.sorted_winkler" title="poi_interlinking.processing.sim_measures.sorted_winkler"><code class="xref py py-func docutils literal notranslate"><span class="pre">sorted_winkler()</span></code></a>.</p></li>
+<li><p><em>lgm</em>: LGM-Sim variations that integrate, as internal, the similarity measures utilized in <em>basic</em> group,
+except for the <a class="reference internal" href="#poi_interlinking.processing.sim_measures.sorted_winkler" title="poi_interlinking.processing.sim_measures.sorted_winkler"><code class="xref py py-func docutils literal notranslate"><span class="pre">sorted_winkler()</span></code></a>.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s2</strong> (<em>s1</em><em>,</em>) – Input toponyms.</p></li>
+<li><p><strong>sorted</strong> (<em>bool</em><em>, </em><em>optional</em>) – Value of True indicate to build features for groups <em>basic</em> and <em>basic_sorted</em>, value of False only for <em>basic</em> group.</p></li>
+<li><p><strong>lgm_sims</strong> (<em>bool</em><em>, </em><em>optional</em>) – Values of True or False indicate whether to build or not features for group <em>lgm</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>It returns a list (vector) of features.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-poi_interlinking.processing.spatial.matching"></span></div></blockquote>
+</div>
+<div class="section" id="similarity-measures">
+<h2>Similarity measures<a class="headerlink" href="#similarity-measures" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><span class="target" id="module-poi_interlinking.processing.sim_measures"></span><p>This module implements various similarity metrics used across different scenarios. Many of these functions were
+developed by Rui Santos and Alexandre Marinho for their work in
+<a class="reference external" href="https://github.com/ruipds/Toponym-Matching/blob/master/datasetcreator.py">Toponym-Matching</a>.</p>
+<dl class="py function">
+<dt id="poi_interlinking.processing.sim_measures.skipgram">
+<code class="sig-prename descclassname">poi_interlinking.processing.sim_measures.</code><code class="sig-name descname">skipgram</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">str1</span></em>, <em class="sig-param"><span class="n">str2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/sim_measures.html#skipgram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.sim_measures.skipgram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements Jaccard-skipgram metric.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>str2</strong> (<em>str1</em><em>,</em>) – Input values in unicode.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A similarity score normalized in range [0,1].</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poi_interlinking.processing.sim_measures.davies">
+<code class="sig-prename descclassname">poi_interlinking.processing.sim_measures.</code><code class="sig-name descname">davies</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">str1</span></em>, <em class="sig-param"><span class="n">str2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/sim_measures.html#davies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.sim_measures.davies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements Davies de Salles metric.</p>
+<dl class="simple">
+<dt>str1, str2: str</dt><dd><p>Input values in unicode.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A similarity score normalized in range [0,1].</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poi_interlinking.processing.sim_measures.cosine">
+<code class="sig-prename descclassname">poi_interlinking.processing.sim_measures.</code><code class="sig-name descname">cosine</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">str1</span></em>, <em class="sig-param"><span class="n">str2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/sim_measures.html#cosine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.sim_measures.cosine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements Cosine N-Grams metric for n=[2,3].</p>
+<dl class="simple">
+<dt>str1, str2: str</dt><dd><p>Input values in unicode.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A similarity score normalized in range [0,1].</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poi_interlinking.processing.sim_measures.damerau_levenshtein">
+<code class="sig-prename descclassname">poi_interlinking.processing.sim_measures.</code><code class="sig-name descname">damerau_levenshtein</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">str1</span></em>, <em class="sig-param"><span class="n">str2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/sim_measures.html#damerau_levenshtein"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.sim_measures.damerau_levenshtein" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements Damerau-Levenshtein metric.</p>
+<dl class="simple">
+<dt>str1, str2: str</dt><dd><p>Input values in unicode.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A similarity score normalized in range [0,1].</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poi_interlinking.processing.sim_measures.jaro">
+<code class="sig-prename descclassname">poi_interlinking.processing.sim_measures.</code><code class="sig-name descname">jaro</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">str1</span></em>, <em class="sig-param"><span class="n">str2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/sim_measures.html#jaro"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.sim_measures.jaro" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements Jaro metric.</p>
+<dl class="simple">
+<dt>str1, str2: str</dt><dd><p>Input values in unicode.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A similarity score normalized in range [0,1].</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poi_interlinking.processing.sim_measures.jaro_winkler">
+<code class="sig-prename descclassname">poi_interlinking.processing.sim_measures.</code><code class="sig-name descname">jaro_winkler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">str1</span></em>, <em class="sig-param"><span class="n">str2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/sim_measures.html#jaro_winkler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.sim_measures.jaro_winkler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements Jaro-Winkler metric.</p>
+<dl class="simple">
+<dt>str1, str2: str</dt><dd><p>Input values in unicode.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A similarity score normalized in range [0,1].</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poi_interlinking.processing.sim_measures.monge_elkan">
+<code class="sig-prename descclassname">poi_interlinking.processing.sim_measures.</code><code class="sig-name descname">monge_elkan</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">str1</span></em>, <em class="sig-param"><span class="n">str2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/sim_measures.html#monge_elkan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.sim_measures.monge_elkan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements Monge-Elkan metric.</p>
+<dl class="simple">
+<dt>str1, str2: str</dt><dd><p>Input values in unicode.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A similarity score normalized in range [0,1].</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poi_interlinking.processing.sim_measures.strike_a_match">
+<code class="sig-prename descclassname">poi_interlinking.processing.sim_measures.</code><code class="sig-name descname">strike_a_match</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">str1</span></em>, <em class="sig-param"><span class="n">str2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/sim_measures.html#strike_a_match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.sim_measures.strike_a_match" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements Dice Bi-Grams metric.</p>
+<dl class="simple">
+<dt>str1, str2: str</dt><dd><p>Input values in unicode.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A similarity score normalized in range [0,1].</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poi_interlinking.processing.sim_measures.jaccard">
+<code class="sig-prename descclassname">poi_interlinking.processing.sim_measures.</code><code class="sig-name descname">jaccard</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">str1</span></em>, <em class="sig-param"><span class="n">str2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/sim_measures.html#jaccard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.sim_measures.jaccard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements Jaccard N-Grams metric for n=[2,3].</p>
+<dl class="simple">
+<dt>str1, str2: str</dt><dd><p>Input values in unicode.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A similarity score normalized in range [0,1].</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poi_interlinking.processing.sim_measures.soft_jaccard">
+<code class="sig-prename descclassname">poi_interlinking.processing.sim_measures.</code><code class="sig-name descname">soft_jaccard</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">str1</span></em>, <em class="sig-param"><span class="n">str2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/sim_measures.html#soft_jaccard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.sim_measures.soft_jaccard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements Soft-Jaccard metric.</p>
+<dl class="simple">
+<dt>str1, str2: str</dt><dd><p>Input values in unicode.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A similarity score normalized in range [0,1].</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poi_interlinking.processing.sim_measures.sorted_winkler">
+<code class="sig-prename descclassname">poi_interlinking.processing.sim_measures.</code><code class="sig-name descname">sorted_winkler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">str1</span></em>, <em class="sig-param"><span class="n">str2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/sim_measures.html#sorted_winkler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.sim_measures.sorted_winkler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements Sorted Jaro-Winkler metric.</p>
+<dl class="simple">
+<dt>str1, str2: str</dt><dd><p>Input values in unicode.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A similarity score normalized in range [0,1].</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poi_interlinking.processing.sim_measures.tuned_jaro_winkler">
+<code class="sig-prename descclassname">poi_interlinking.processing.sim_measures.</code><code class="sig-name descname">tuned_jaro_winkler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s1</span></em>, <em class="sig-param"><span class="n">s2</span></em>, <em class="sig-param"><span class="n">long_tolerance</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/sim_measures.html#tuned_jaro_winkler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.sim_measures.tuned_jaro_winkler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements Tuned Jaro-Winkler metric.</p>
+<dl class="simple">
+<dt>str1, str2: str</dt><dd><p>Input values in unicode.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A similarity score normalized in range [0,1].</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poi_interlinking.processing.sim_measures.lgm_sim_split">
+<code class="sig-prename descclassname">poi_interlinking.processing.sim_measures.</code><code class="sig-name descname">lgm_sim_split</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s1</span></em>, <em class="sig-param"><span class="n">s2</span></em>, <em class="sig-param"><span class="n">split_thres</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/sim_measures.html#lgm_sim_split"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.sim_measures.lgm_sim_split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits each toponym-string, i.e., s1, s2, to tokens, builds three distinct lists per toponym-string, i.e., base,
+mismatch and frequent, and assigns the produced tokens to these lists. The <em>base</em> lists contains the terms that are
+similar to one of the other toponym’s tokens, The <em>mismatch</em> contains the terms that have no similar pair to the
+tokens of the other toponym and the <em>frequent</em> list contains the terms that are common for the specified dataset
+of toponyms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s2</strong> (<em>s1</em><em>,</em>) – Input values in unicode.</p></li>
+<li><p><strong>split_thres</strong> (<em>float</em>) – If the similarity score is above this threshold, the compared terms are identified as base terms,
+otherwise as mismatch ones.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Three lists of terms identified as base, mismatch or frequent respectively per toponym, i.e., <em>a</em> for s1 and
+<em>b</em> for s2.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple of (dict of list of <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, dict of list of <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, dict of list of <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poi_interlinking.processing.sim_measures.score_per_term">
+<code class="sig-prename descclassname">poi_interlinking.processing.sim_measures.</code><code class="sig-name descname">score_per_term</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_t</span></em>, <em class="sig-param"><span class="n">mis_t</span></em>, <em class="sig-param"><span class="n">special_t</span></em>, <em class="sig-param"><span class="n">metric</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/sim_measures.html#score_per_term"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.sim_measures.score_per_term" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes three distinct similarity scores for each list of terms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mismatch_t special_t</strong> (<em>base_t</em><em>,</em>) – Lists of toponym terms identified as base, mismatch or frequent (special) respectively.</p></li>
+<li><p><strong>metric</strong> (<em>str</em>) – Indicates the metric to utilize in order to calculate the similarity score by comparing individually the
+three lists.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A similarity score for every list of terms. Each score is normalized in range [0,1].</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple of (float, float, float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poi_interlinking.processing.sim_measures.weighted_sim">
+<code class="sig-prename descclassname">poi_interlinking.processing.sim_measures.</code><code class="sig-name descname">weighted_sim</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_t</span></em>, <em class="sig-param"><span class="n">mis_t</span></em>, <em class="sig-param"><span class="n">special_t</span></em>, <em class="sig-param"><span class="n">metric</span></em>, <em class="sig-param"><span class="n">avg</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/sim_measures.html#weighted_sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.sim_measures.weighted_sim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-calculates the significance weights for each list of terms taking into account their lengths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mis_t</strong><strong>, </strong><strong>special_t</strong> (<em>base_t</em><em>,</em>) – Lists of toponym terms identified as base, mismatch or frequent (special) respectively.</p></li>
+<li><p><strong>metric</strong> (<em>str</em>) – Indicates the metric to utilize in order to calculate the similarity score by comparing individually the
+three lists.</p></li>
+<li><p><strong>avg</strong> (<em>bool</em>) – If value is True, the three individual similarity scores (for each term list) are properly weighted, otherwise
+each term list’ score is of equal significance to the final score.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A similarity score normalized in range [0,1].</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poi_interlinking.processing.sim_measures.lgm_sim">
+<code class="sig-prename descclassname">poi_interlinking.processing.sim_measures.</code><code class="sig-name descname">lgm_sim</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">str1</span></em>, <em class="sig-param"><span class="n">str2</span></em>, <em class="sig-param"><span class="n">metric</span><span class="o">=</span><span class="default_value">'damerau_levenshtein'</span></em>, <em class="sig-param"><span class="n">avg</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/sim_measures.html#lgm_sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.sim_measures.lgm_sim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements LGM-Sim metric.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>str2</strong> (<em>str1</em><em>,</em>) – Input values in unicode.</p></li>
+<li><p><strong>metric</strong> (<em>str</em><em>, </em><em>optional</em>) – Similarity metric used, as internal one, to split toponyms in the two distinct lists that contains base and
+mismatch terms respectively. Each of the above supported metrics can be used as input.
+Default metric is <a class="reference internal" href="#poi_interlinking.processing.sim_measures.damerau_levenshtein" title="poi_interlinking.processing.sim_measures.damerau_levenshtein"><code class="xref py py-attr docutils literal notranslate"><span class="pre">damerau_levenshtein</span></code></a>.</p></li>
+<li><p><strong>avg</strong> (<em>bool</em><em>, </em><em>optional</em>) – If value is True, the three individual similarity scores (for each term list) are properly weighted, otherwise
+each term list’ score is of equal significance to the final score. Default value is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A similarity score normalized in range [0,1].</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poi_interlinking.processing.sim_measures.avg_lgm_sim">
+<code class="sig-prename descclassname">poi_interlinking.processing.sim_measures.</code><code class="sig-name descname">avg_lgm_sim</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">str1</span></em>, <em class="sig-param"><span class="n">str2</span></em>, <em class="sig-param"><span class="n">metric</span><span class="o">=</span><span class="default_value">'damerau_levenshtein'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/sim_measures.html#avg_lgm_sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.sim_measures.avg_lgm_sim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements LGM-Sim metric where <em>avg</em> flag is True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>str2</strong> (<em>str1</em><em>,</em>) – Input values in unicode.</p></li>
+<li><p><strong>metric</strong> (<em>str</em><em>, </em><em>optional</em>) – Similarity metric used, as internal one, to split toponyms in the two distinct lists that contains base and
+mismatch terms respectively. Each of the above supported metrics can be used as input.
+Default metric is <a class="reference internal" href="#poi_interlinking.processing.sim_measures.damerau_levenshtein" title="poi_interlinking.processing.sim_measures.damerau_levenshtein"><code class="xref py py-attr docutils literal notranslate"><span class="pre">damerau_levenshtein</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A similarity score normalized in range [0,1].</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div></blockquote>
+<p><a class="reference internal" href="index.html#mastertoc"><span class="std std-ref">Return Home</span></a></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+	<a href="https://github.com/LinkGeoML/POI-Interlinking">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub">
+    </a>
+
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="deploy.html" class="btn btn-neutral float-right" title="deployment" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pre_process.html" class="btn btn-neutral float-left" title="pre_processing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Vassilis Kaffes
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

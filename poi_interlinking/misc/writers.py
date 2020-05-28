@@ -26,12 +26,9 @@ def write_results(fpath, results, delimiter='&'):
     Writes full and averaged experiment results.
 
     Args:
-        fpath (str): Path to write
-        results (dict): Contains metrics as keys and the corresponding values \
-            values
-
-    Returns:
-        None
+        fpath (:obj:`str`): Path to write.
+        results (dict): Contains metrics as keys and the corresponding values values.
+        delimiter (str): Field delimiter to use.
     """
     file_exists = True
     if not os.path.exists(fpath): file_exists = False

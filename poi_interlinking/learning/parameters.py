@@ -10,6 +10,19 @@ from poi_interlinking.processing import sim_measures
 
 
 def learn_thres(fname, sim_group='basic'):
+    """Learn optimal thresholds of supported similarity metrics on achieving highest accuracy on input data.
+
+    Parameters
+    ----------
+    fname : str
+        Input filename to search for optimal thresholds.
+    sim_group : str
+        The group of metrics to search for optimal thresholds. This applies to all groups except for ``lgm``.
+
+    See Also
+    --------
+    :class:`~poi_interlinking.processing.features.Features` : Details on the supported groups.
+    """
     low_thres = 30
     high_thres = 91
     step = 5
@@ -61,13 +74,28 @@ def learn_thres(fname, sim_group='basic'):
         print(key, max(val, key=lambda x: x[0]))
 
 
-def learn_params_for_lgm(fname, encoding, sim_group='lgm'):
+def learn_params_for_lgm(fname, encoding):
+    """Learn optimal thresholds and weights for the ``lgm`` group of similarity metrics on achieving highest accuracy
+    on input data.
+
+    Parameters
+    ----------
+    fname : str
+        Input filename to search for optimal thresholds.
+    encoding : str
+        The encoding of the fname. Valid options are *latin* or *global*.
+
+    See Also
+    --------
+    :class:`~poi_interlinking.processing.features.Features` : Details on the supported groups.
+    """
     low_thres = 30
     high_thres = 91
     step = 5
     low_split_thres = 50
     high_split_thres = 91
     split_step = 10
+    sim_group = 'lgm'
 
     assert (os.path.isfile(os.path.join(config.default_data_path, fname))), f'{fname} dataset does not exist'
 
