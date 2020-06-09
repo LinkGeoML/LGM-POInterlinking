@@ -98,7 +98,10 @@ class MLConf:
     """
     #: int: Number of iterations that RandomizedSearchCV should execute. It applies only when
     #: :attr:`hyperparams_search_method` equals to 'randomized'.
-    max_iter = 250
+    max_iter = 300
+
+    #: int: Number of ranked features to print
+    max_features_to_show = 10
 
     classifiers = [
         # 'SVM',
@@ -118,7 +121,8 @@ class MLConf:
     - MLP.
     """
 
-    score = 'accuracy'
+    # score = 'roc_auc_ovr_weighted'
+    score = 'roc_auc'
     """str: The metric to optimize on hyper-parameter tuning. Possible valid values presented on `Scikit predefined values`_. 
 
     .. _Scikit predefined values:

@@ -9,8 +9,9 @@ from shutil import copyfile
 from datetime import datetime
 import numpy as np
 from collections import defaultdict
+from beautifultable import BeautifulTable
 
-from poi_interlinking import config
+from poi_interlinking import config, helpers
 from poi_interlinking.learning import hyperparam_tuning
 from poi_interlinking.processing.features import Features
 from poi_interlinking.processing.sim_measures import LGMSimVars
@@ -67,7 +68,11 @@ class StrategyEvaluator:
             # 3th phase: test the fine tuned best classifier on the test dataset
             metrics = pt.testClassifier(fX_test, y_test, estimator)
 
-            res = dict(Classifier=best_clf['classifier'], **metrics, time=time.time() - start_time)
+            res = dict(
+                Classifier=best_clf['classifier'], **metrics,
+                fimportances=best_clf['importances'] if 'importances' in best_clf else None,
+                time=time.time() - start_time
+            )
             self._print_stats(res)
 
         print("The whole process took {} sec.".format(time.time() - tot_time))
@@ -166,27 +171,35 @@ class StrategyEvaluator:
     @staticmethod
     def _print_stats(params):
         print("| Method\t& Accuracy\t& Precision\t& Prec-weighted\t& Recall\t& Rec-weighted"
-              "\t& F1-Score\t& F1-weighted\t& Time (sec)")
-        print("||{}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}".format(
+              "\t& F1-Score\t& F1-weighted"
+              "\t& Roc-AUC\t& ROC-AUC-weighted"
+              "\t& Time (sec)")
+        print("||{}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}".format(
             params['Classifier'],
             params['Accuracy'],
             params['Precision'], params['Precision_weighted'],
             params['Recall'], params['Recall_weighted'],
             params['F1_score'], params['F1_score_weighted'],
+            params['roc_auc'], params['roc_auc_weighted'],
             params['time']))
 
-        # if params['feature_importances'] is not None:
-        #     importances = np.ma.masked_equal(params['feature_importances'], 0.0)
-        #     if importances.mask is np.ma.nomask: importances.mask = np.zeros(importances.shape, dtype=bool)
-        #
-        #     indices = np.argsort(importances.compressed())[::-1][
-        #               :min(importances.compressed().shape[0], self.max_features_toshow)]
-        #     headers = ["name", "score"]
-        #
-        #     fcols = StaticValues.featureCols if config.MLConf.extra_features is False \
-        #         else StaticValues.featureCols + StaticValues.extra_featureCols
-        #     print(tabulate(zip(
-        #         np.asarray(fcols, object)[~importances.mask][indices], importances.compressed()[indices]
-        #     ), headers, tablefmt="simple"))
+        if 'fimportances' in params and params['fimportances'] is not None:
+            importances = np.ma.masked_equal(params['fimportances'], 0.0)
+            if importances.mask is np.ma.nomask: importances.mask = np.zeros(importances.shape, dtype=bool)
+
+            indices = np.argsort(importances.compressed())[::-1][
+                      :min(importances.compressed().shape[0], config.MLConf.max_features_to_show)]
+            headers = ["name", "score"]
+
+            table = BeautifulTable()
+            fcols = helpers.StaticValues(config.MLConf.classification_method).final_cols
+            table.column_headers = headers
+
+            for feature_name, val in zip(np.asarray(fcols, object)[~importances.mask][indices],
+                                         importances.compressed()[indices]):
+                table.append_row([feature_name, val])
+
+            table.set_style(BeautifulTable.STYLE_RST)
+            print(table)
 
         print()

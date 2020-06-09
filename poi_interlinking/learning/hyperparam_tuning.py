@@ -10,7 +10,7 @@ from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
 from xgboost import XGBClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, balanced_accuracy_score
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, balanced_accuracy_score, roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 
 
@@ -121,10 +121,19 @@ class ParamTuning:
                 hyperparams_found['estimator'] = clf.best_estimator_
                 hyperparams_found['classifier'] = clf_key
                 hyperparams_found['scorers'] = clf.scorer_
+                if hasattr(clf.best_estimator_, 'feature_importances_'):
+                    hyperparams_found['importances'] = clf.best_estimator_.feature_importances_
+                elif hasattr(clf.best_estimator_, 'coef_'):
+                    hyperparams_found['importances'] = clf.best_estimator_.coef_
 
                 hyperparams_data.append(hyperparams_found)
             except KeyError as e:
                 print("type error: {} for key: {}".format(str(e), clf_key))
+
+        if len(hyperparams_data) > 1:
+            print('Stats for examined classifiers:')
+            for d in hyperparams_data:
+                print(f'\t{d["classifier"]} with hyperparams {d["hyperparams"]} and score {d["score"]}')
 
         _, best_clf = max(enumerate(hyperparams_data), key=(lambda x: x[1]['score']))
 
@@ -181,5 +190,7 @@ class ParamTuning:
         metrics['Recall_weighted'] = recall_score(y_test, y_pred, average='weighted')
         metrics['F1_score'] = f1_score(y_test, y_pred)
         metrics['F1_score_weighted'] = f1_score(y_test, y_pred, average='weighted')
+        metrics['roc_auc'] = roc_auc_score(y_test, y_pred)
+        metrics['roc_auc_weighted'] = roc_auc_score(y_test, y_pred, average='weighted')
 
         return metrics

@@ -21,6 +21,18 @@ punctuation_regex = re.compile(u'[‘’“”\'"!?;/⧸⁄‹›«»`ʿ,.-]')
 
 
 def strip_accents(s):
+    """Transliterate any unicode string into the closest possible representation in ascii text.
+
+    Parameters
+    ----------
+    s : str
+        Input string
+
+    Returns
+    -------
+    str
+        The transliterated string.
+    """
     return ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
 
 
@@ -35,7 +47,8 @@ def ascii_transliteration_and_punctuation_strip(s):
 
 
 def transform(s1, s2, sorting=False, canonical=False, delimiter=' ', simple_sorting=False):
-    """
+    """Perform normalization processes to input strings such as lowercasing, transliteration and punctuation/accentuation
+    alignment.
 
     Parameters
     ----------
@@ -49,8 +62,8 @@ def transform(s1, s2, sorting=False, canonical=False, delimiter=' ', simple_sort
         If ``True`` and ``simple_sorting`` is ``False``, then perform the custom type of sorting.
     canonical: bool
         A boolean flag whether to perform canonical decomposition, i.e., translates each character into its decomposed
-        form and afterwards apply the compatibility decomposition, i.e. replace all compatibility characters with their
-        equivalents.sorting or not.
+        form, and, afterwards, apply the compatibility decomposition, i.e. replace all compatibility characters with
+        their equivalents.sorting or not.
     delimiter: str
         Character used to split s1 and s2.
     simple_sorting: bool
@@ -90,7 +103,7 @@ def transform(s1, s2, sorting=False, canonical=False, delimiter=' ', simple_sort
 
 
 def sorted_nicely(l):
-    """ Sorts the given iterable in the way that is expected.
+    """Sort the given iterable in the way that is expected.
 
     Parameters
     ----------

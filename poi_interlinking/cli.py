@@ -12,8 +12,8 @@ def cli():
     pass
 
 
-@cli.command()
-@click.option('--bbox', default='38.02,23.77,38.07,23.84',
+@cli.command(help='download POIs into a defined bounding box over Overpass-turbo API')
+@click.option('--bbox', default='38.02,23.77,38.07,23.84', show_default=True,
               help='Coordinates of the bounding box for an area in a comma-separated format as: lat1,lon1,lat2,lon2')
 def download(bbox):
     click.echo('Downloading POIs with Overpass-turbo API')
@@ -45,21 +45,20 @@ def learn_params(train_set, sim_type, encoding):
     else: pm.learn_thres(train_set, sim_type)
 
 
-@cli.command('hyperparam_tuning', help='tune various classifiers and select the best hyper-parameters on a '
-                                       'train dataset')
-@click.option('--data_set', default='', help='the dataset to train/evaluate the models.')
+@cli.command('tune', help='tune various classifiers and select the best hyper-parameters on a train dataset')
+@click.option('--dataset', default='', help='the dataset to train/evaluate the models.')
 @click.option('--encoding', default='latin', show_default=True, type=click.Choice(['latin', 'global']),
               help='Specify the alphabet encoding of toponyms in dataset.')
-def hyperparams_learn(data_set, encoding):
-    core.StrategyEvaluator(encoding).hyperparamTuning(data_set)
+def hyperparams_learn(dataset, encoding):
+    core.StrategyEvaluator(encoding).hyperparamTuning(dataset)
 
 
 @cli.command('evaluate', help='evaluate the effectiveness of the proposed methods')
-@click.option('--data_set', default='', help='the dataset to train/evaluate the models.')
+@click.option('--dataset', default='', help='the dataset to train/evaluate the models.')
 @click.option('--encoding', default='latin', show_default=True, type=click.Choice(['latin', 'global']),
               help='Specify the encoding of toponyms in dataset.')
-def eval_classifiers(data_set, encoding):
-    core.StrategyEvaluator(encoding).evaluate(data_set)
+def eval_classifiers(dataset, encoding):
+    core.StrategyEvaluator(encoding).evaluate(dataset)
 
 
 cli.add_command(download)

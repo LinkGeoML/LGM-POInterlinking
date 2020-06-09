@@ -144,6 +144,7 @@ class Features:
         fX3 = preprocessing.MinMaxScaler().fit_transform(fX3)
 
         fX = np.concatenate((fX0, fX2, fX1, fX3), axis=1)
+        print(f'{fX.shape[1]} features are build')
 
         return fX, y
 
