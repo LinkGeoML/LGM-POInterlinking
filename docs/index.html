@@ -162,8 +162,8 @@
   <div class="section" id="welcome-to-poi-interlinking-s-documentation">
 <h1>Welcome to POI-Interlinking’s documentation!<a class="headerlink" href="#welcome-to-poi-interlinking-s-documentation" title="Permalink to this headline">¶</a></h1>
 <p><a class="reference external" href="https://opensource.org/licenses/MIT"><img alt="MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" /></a></p>
-<div class="section" id="poi-interlinking">
-<h2>POI-Interlinking<a class="headerlink" href="#poi-interlinking" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="lgm-pointerlinking">
+<h2>LGM-POInterlinking<a class="headerlink" href="#lgm-pointerlinking" title="Permalink to this headline">¶</a></h2>
 <p>This Python code implements and evaluates the proposed LinkGeoML models for POI classification-based interlinking.</p>
 <p>In this setting, we consider several of the attributes connected to each spatio-textual entity to decide whether two
 POIs refer to the same physical spatial entity. Specifically, we utilize the following attributes which can be
@@ -177,7 +177,7 @@ learning workflow that involves the grid-search and cross-validation functionali
 <p>The source code was tested using Python 3 (&gt;=3.6) and Scikit-Learn 0.22.2.post1 on a Linux server.</p>
 <div class="section" id="setup-procedure">
 <h3>Setup procedure<a class="headerlink" href="#setup-procedure" title="Permalink to this headline">¶</a></h3>
-<p>Download the latest version from the <a class="reference external" href="https://github.com/LinkGeoML/POI-Interlinking.git">GitHub repository</a>, change to
+<p>Download the latest version from the <a class="reference external" href="https://github.com/LinkGeoML/LGM-POInterlinking.git">GitHub repository</a>, change to
 the main directory and run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install -r pip_requirements.txt
 </pre></div>
@@ -226,8 +226,7 @@ splitting it in folds.</p>
 </ol>
 <p>A complete pipeline of the above processes, i.e., features extraction, training and evaluating state-of-the-art
 classifiers, for toponym interlinking can be executed with the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python -m poi_interlinking.cli hyperparam_tuning --train_set &lt;path/to/train-dataset&gt;
---test_set &lt;path/to/test-dataset&gt;
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python -m poi_interlinking.cli tune --train_set &lt;path/to/train-dataset&gt; --test_set &lt;path/to/test-dataset&gt;
 </pre></div>
 </div>
 <p>Additionally, <em>help</em> is available on the command line interface (<em>CLI</em>). Enter the following to list all supported
@@ -248,7 +247,7 @@ Commands:
 </div>
 <div class="section" id="documentation">
 <h3>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h3>
-<p>Source code documentation is available from <a class="reference external" href="https://linkgeoml.github.io/POI-Interlinking/">linkgeoml.github.io</a>.</p>
+<p>Source code documentation is available from <a class="reference external" href="https://linkgeoml.github.io/LGM-POInterlinking/">linkgeoml.github.io</a>.</p>
 </div>
 <div class="section" id="license">
 <h3>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h3>
@@ -281,7 +280,7 @@ Commands:
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-<p>This documentation was last updated on May 28, 2020.</p>
+<p>This documentation was last updated on Jun 12, 2020.</p>
 </div>
 </div>
 </div>

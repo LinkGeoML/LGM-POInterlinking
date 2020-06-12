@@ -179,8 +179,20 @@
 <span class="n">punctuation_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;[‘’“”</span><span class="se">\&#39;</span><span class="s1">&quot;!?;/⧸⁄‹›«»`ʿ,.-]&#39;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">strip_accents</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="s1">&#39;NFD&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="k">if</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">category</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">&#39;Mn&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="strip_accents"><a class="viewcode-back" href="../../misc.html#poi_interlinking.helpers.strip_accents">[docs]</a><span class="k">def</span> <span class="nf">strip_accents</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Transliterate any unicode string into the closest possible representation in ascii text.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    s : str</span>
+<span class="sd">        Input string</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The transliterated string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="s1">&#39;NFD&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="k">if</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">category</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">&#39;Mn&#39;</span><span class="p">)</span></div>
 
 
 <span class="k">def</span> <span class="nf">ascii_transliteration_and_punctuation_strip</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
@@ -194,7 +206,8 @@
 
 
 <div class="viewcode-block" id="transform"><a class="viewcode-back" href="../../misc.html#poi_interlinking.helpers.transform">[docs]</a><span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">sorting</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">canonical</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">simple_sorting</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Perform normalization processes to input strings such as lowercasing, transliteration and punctuation/accentuation</span>
+<span class="sd">    alignment.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -208,8 +221,8 @@
 <span class="sd">        If ``True`` and ``simple_sorting`` is ``False``, then perform the custom type of sorting.</span>
 <span class="sd">    canonical: bool</span>
 <span class="sd">        A boolean flag whether to perform canonical decomposition, i.e., translates each character into its decomposed</span>
-<span class="sd">        form and afterwards apply the compatibility decomposition, i.e. replace all compatibility characters with their</span>
-<span class="sd">        equivalents.sorting or not.</span>
+<span class="sd">        form, and, afterwards, apply the compatibility decomposition, i.e. replace all compatibility characters with</span>
+<span class="sd">        their equivalents.sorting or not.</span>
 <span class="sd">    delimiter: str</span>
 <span class="sd">        Character used to split s1 and s2.</span>
 <span class="sd">    simple_sorting: bool</span>
@@ -249,7 +262,7 @@
 
 
 <div class="viewcode-block" id="sorted_nicely"><a class="viewcode-back" href="../../misc.html#poi_interlinking.helpers.sorted_nicely">[docs]</a><span class="k">def</span> <span class="nf">sorted_nicely</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Sorts the given iterable in the way that is expected.</span>
+    <span class="sd">&quot;&quot;&quot;Sort the given iterable in the way that is expected.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>

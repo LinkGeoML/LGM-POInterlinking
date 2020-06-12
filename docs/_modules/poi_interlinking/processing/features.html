@@ -303,6 +303,7 @@
         <span class="n">fX3</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">MinMaxScaler</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">fX3</span><span class="p">)</span>
 
         <span class="n">fX</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">fX0</span><span class="p">,</span> <span class="n">fX2</span><span class="p">,</span> <span class="n">fX1</span><span class="p">,</span> <span class="n">fX3</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">fX</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> features are build&#39;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">fX</span><span class="p">,</span> <span class="n">y</span></div>
 

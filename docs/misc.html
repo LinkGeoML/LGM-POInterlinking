@@ -164,9 +164,28 @@
 <h1>miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h1>
 <blockquote>
 <div><span class="target" id="module-poi_interlinking.helpers"></span><dl class="py function">
+<dt id="poi_interlinking.helpers.strip_accents">
+<code class="sig-prename descclassname">poi_interlinking.helpers.</code><code class="sig-name descname">strip_accents</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/helpers.html#strip_accents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.helpers.strip_accents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transliterate any unicode string into the closest possible representation in ascii text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>str</em>) – Input string</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The transliterated string.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="poi_interlinking.helpers.transform">
 <code class="sig-prename descclassname">poi_interlinking.helpers.</code><code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s1</span></em>, <em class="sig-param"><span class="n">s2</span></em>, <em class="sig-param"><span class="n">sorting</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">canonical</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">delimiter</span><span class="o">=</span><span class="default_value">' '</span></em>, <em class="sig-param"><span class="n">simple_sorting</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/helpers.html#transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.helpers.transform" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Perform normalization processes to input strings such as lowercasing, transliteration and punctuation/accentuation
+alignment.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>s1</strong> (<em>str</em>) – The first string.</p></li>
@@ -175,8 +194,8 @@
 sorting applies only when the strings similarity is below the <a class="reference internal" href="config.html#poi_interlinking.config.sort_thres" title="poi_interlinking.config.sort_thres"><code class="xref py py-attr docutils literal notranslate"><span class="pre">sort_thres</span></code></a>.
 If <code class="docutils literal notranslate"><span class="pre">True</span></code> and <code class="docutils literal notranslate"><span class="pre">simple_sorting</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>, then perform the custom type of sorting.</p></li>
 <li><p><strong>canonical</strong> (<em>bool</em>) – A boolean flag whether to perform canonical decomposition, i.e., translates each character into its decomposed
-form and afterwards apply the compatibility decomposition, i.e. replace all compatibility characters with their
-equivalents.sorting or not.</p></li>
+form, and, afterwards, apply the compatibility decomposition, i.e. replace all compatibility characters with
+their equivalents.sorting or not.</p></li>
 <li><p><strong>delimiter</strong> (<em>str</em>) – Character used to split s1 and s2.</p></li>
 <li><p><strong>simple_sorting</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> apply alphanumeric sorting on s1 and s2.</p></li>
 </ul>
@@ -193,7 +212,7 @@ equivalents.sorting or not.</p></li>
 <dl class="py function">
 <dt id="poi_interlinking.helpers.sorted_nicely">
 <code class="sig-prename descclassname">poi_interlinking.helpers.</code><code class="sig-name descname">sorted_nicely</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">l</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/helpers.html#sorted_nicely"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.helpers.sorted_nicely" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sorts the given iterable in the way that is expected.</p>
+<dd><p>Sort the given iterable in the way that is expected.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>l</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code> of str) – The iterable to be sorted.</p>

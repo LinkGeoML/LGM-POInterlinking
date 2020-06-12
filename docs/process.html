@@ -241,7 +241,53 @@ except for the <a class="reference internal" href="#poi_interlinking.processing.
 
 </dd></dl>
 
-<span class="target" id="module-poi_interlinking.processing.spatial.matching"></span></div></blockquote>
+<span class="target" id="module-poi_interlinking.processing.spatial.matching"></span><dl class="py function">
+<dt id="poi_interlinking.processing.spatial.matching.get_distance">
+<code class="sig-prename descclassname">poi_interlinking.processing.spatial.matching.</code><code class="sig-name descname">get_distance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p1</span></em>, <em class="sig-param"><span class="n">p2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/spatial/matching.html#get_distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.spatial.matching.get_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>It finds the minimum distance between two Points</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p1</strong> (<em>shapely geometric object</em>) – The first point</p></li>
+<li><p><strong>p2</strong> (<em>shapely geometric object</em>) – The second point</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns the minimum distance. The value follows the geometric object projection.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt id="poi_interlinking.processing.spatial.matching.Projection">
+<em class="property">class </em><code class="sig-prename descclassname">poi_interlinking.processing.spatial.matching.</code><code class="sig-name descname">Projection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">src</span><span class="o">=</span><span class="default_value">'4326'</span></em>, <em class="sig-param"><span class="n">dest</span><span class="o">=</span><span class="default_value">'3857'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/spatial/matching.html#Projection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.spatial.matching.Projection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform coordinates of a geometric object among specified projections</p>
+<dl class="py method">
+<dt id="poi_interlinking.processing.spatial.matching.Projection.change_projection">
+<code class="sig-name descname">change_projection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lon</span></em>, <em class="sig-param"><span class="n">lat</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poi_interlinking/processing/spatial/matching.html#Projection.change_projection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poi_interlinking.processing.spatial.matching.Projection.change_projection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms the coordinates of a geometric object to the new projection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lon</strong> (<em>float</em>) – The longitude of the geometric Point.</p></li>
+<li><p><strong>lat</strong> (<em>float</em>) – The latitude of the geometric Point.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>A shapely Point on the new projection.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
 </div>
 <div class="section" id="similarity-measures">
 <h2>Similarity measures<a class="headerlink" href="#similarity-measures" title="Permalink to this headline">¶</a></h2>

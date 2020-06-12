@@ -1,8 +1,8 @@
 |MIT|
 
-================
-POI-Interlinking
-================
+==================
+LGM-POInterlinking
+==================
 This Python code implements and evaluates the proposed LinkGeoML models for POI classification-based interlinking.
 
 In this setting, we consider several of the attributes connected to each spatio-textual entity to decide whether two
@@ -20,7 +20,7 @@ The source code was tested using Python 3 (>=3.6) and Scikit-Learn 0.22.2.post1 
 
 Setup procedure
 ---------------
-Download the latest version from the `GitHub repository <https://github.com/LinkGeoML/POI-Interlinking.git>`_, change to
+Download the latest version from the `GitHub repository <https://github.com/LinkGeoML/LGM-POInterlinking.git>`_, change to
 the main directory and run:
 
 .. code-block:: bash
@@ -68,8 +68,7 @@ classifiers, for toponym interlinking can be executed with the following command
 
 .. code-block:: bash
 
-    $ python -m poi_interlinking.cli hyperparam_tuning --train_set <path/to/train-dataset>
-    --test_set <path/to/test-dataset>
+    $ python -m poi_interlinking.cli tune --train_set <path/to/train-dataset> --test_set <path/to/test-dataset>
 
 Additionally, *help* is available on the command line interface (*CLI*). Enter the following to list all supported
 commands or options for a given command with a short description.
@@ -92,7 +91,7 @@ Documentation
 -------------
 Source code documentation is available from `linkgeoml.github.io`__.
 
-__ https://linkgeoml.github.io/POI-Interlinking/
+__ https://linkgeoml.github.io/LGM-POInterlinking/
 
 License
 -------

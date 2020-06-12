@@ -257,7 +257,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#: int: Number of iterations that RandomizedSearchCV should execute. It applies only when</span>
     <span class="c1">#: :attr:`hyperparams_search_method` equals to &#39;randomized&#39;.</span>
-    <span class="n">max_iter</span> <span class="o">=</span> <span class="mi">250</span>
+    <span class="n">max_iter</span> <span class="o">=</span> <span class="mi">300</span>
+
+    <span class="c1">#: int: Number of ranked features to print</span>
+    <span class="n">max_features_to_show</span> <span class="o">=</span> <span class="mi">10</span>
 
     <span class="n">classifiers</span> <span class="o">=</span> <span class="p">[</span>
         <span class="c1"># &#39;SVM&#39;,</span>
@@ -277,7 +280,8 @@
 <span class="sd">    - MLP.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">score</span> <span class="o">=</span> <span class="s1">&#39;accuracy&#39;</span>
+    <span class="c1"># score = &#39;roc_auc_ovr_weighted&#39;</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="s1">&#39;roc_auc&#39;</span>
     <span class="sd">&quot;&quot;&quot;str: The metric to optimize on hyper-parameter tuning. Possible valid values presented on `Scikit predefined values`_. </span>
 
 <span class="sd">    .. _Scikit predefined values:</span>
