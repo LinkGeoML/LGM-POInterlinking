@@ -1,7 +1,7 @@
 |MIT|
 
 ================
-POI-Interlinking
+LGM-POInterlinking
 ================
 This Python code implements and evaluates the proposed LinkGeoML models for POI classification-based interlinking.
 
