@@ -59,14 +59,14 @@ class StrategyEvaluator:
                 best_clf['classifier'], best_clf['hyperparams'], best_clf['score'], time.time() - start_time)
             )
 
-            start_time = time.time()
-            # 2nd phase: train the fine tuned best classifier on the whole train dataset (no folds)
-            estimator = pt.trainClassifier(fX_train, y_train, best_clf['estimator'])
-            print("Finished training model on the dataset; {} sec.".format(time.time() - start_time))
+            # start_time = time.time()
+            # # 2nd phase: train the fine tuned best classifier on the whole train dataset (no folds)
+            # estimator = pt.trainClassifier(fX_train, y_train, best_clf['estimator'])
+            # print("Finished training model on the dataset; {} sec.".format(time.time() - start_time))
 
             # start_time = time.time()
             # 3th phase: test the fine tuned best classifier on the test dataset
-            metrics = pt.testClassifier(fX_test, y_test, estimator)
+            metrics = pt.testClassifier(fX_test, y_test, best_clf['estimator'])
 
             res = dict(
                 Classifier=best_clf['classifier'], **metrics,
