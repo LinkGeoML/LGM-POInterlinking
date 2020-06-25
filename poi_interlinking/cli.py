@@ -53,7 +53,7 @@ def hyperparams_learn(dataset, encoding):
     core.StrategyEvaluator(encoding).hyperparamTuning(dataset)
 
 
-@cli.command('evaluate', help='evaluate the effectiveness of the proposed methods')
+@cli.command('eval', help='evaluate the effectiveness of the proposed methods')
 @click.option('--dataset', default='', help='the dataset to train/evaluate the models.')
 @click.option('--encoding', default='latin', show_default=True, type=click.Choice(['latin', 'global']),
               help='Specify the encoding of toponyms in dataset.')
