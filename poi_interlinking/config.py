@@ -70,14 +70,14 @@ class MLConf:
     :vartype XGBoost_hyperparameters_dist: :obj:`dict`
     """
 
-    kfold_no = 5
+    kfold_no = 10
     """int: The number of outer folds that splits the dataset for the k-fold cross-validation.
     """
 
     #: int: The number of inner folds that splits the dataset for the k-fold cross-validation.
     kfold_inner_parameter = 4
 
-    n_jobs = 4  #: int: Number of parallel jobs to be initiated. -1 means to utilize all available processors.
+    n_jobs = 2  #: int: Number of parallel jobs to be initiated. -1 means to utilize all available processors.
 
     classification_method = 'lgm'
     """str: The classification group of features to use. (*basic* | *basic_sorted* | *lgm*).
@@ -88,7 +88,7 @@ class MLConf:
     """
 
     # accepted values: randomized, grid, hyperband - not yet implemented!!!
-    hyperparams_search_method = 'grid'
+    hyperparams_search_method = 'randomized'
     """str: Search Method to use for finding best hyperparameters. (*randomized* | *grid*).
     
     See Also
@@ -149,8 +149,8 @@ class MLConf:
             # default
             # 'n_estimators': 300, 'max_depth': 100, 'oob_score': True, 'bootstrap': True,
             # best
-            'class_weight': {0: 1, 1: 5}, 'criterion': 'gini', 'max_depth': 1700, 'max_features': 'sqrt',
-            'min_samples_split': 8, 'n_estimators': 50,
+            'class_weight': 'balanced', 'criterion': 'entropy', 'max_depth': 148, 'max_features': 'sqrt',
+            'min_samples_leaf': 4, 'n_estimators': 421,
             'random_state': seed_no, 'n_jobs': n_jobs,  # 'oob_score': True,
         },
         'ExtraTrees': {
@@ -236,22 +236,22 @@ class MLConf:
         },
     ]
     DecisionTree_hyperparameters = {
-        'max_depth': [2, 3, 5, 10, 30, 50, 60, 80, 100],
-        'min_samples_split': [2, 5, 10, 20, 50, 100],
-        'min_samples_leaf': [1, 2, 4, 10],
-        'max_features': list(np.arange(2, 11, 2)) + ["sqrt", "log2"],
+        'max_depth': [3, 5, 10, 30, 50, 60, 80, 100],
+        # 'min_samples_split': [2, 5, 10, 20, 50, 100],
+        'min_samples_leaf': [2, 4, 5, 10],
+        'max_features': [0.3, 0.4, 0.5, 0.6, 0.7],  # list(np.arange(2, 11, 2)) + ["sqrt", "log2"],
         'splitter': ['best', 'random'],
-        'class_weight': ['balanced', {0: 1, 1: 3}, {0: 1, 1: 5}],
+        'class_weight': ['balanced', {0: 1, 1: 2}, {0: 1, 1: 3}, {0: 1, 1: 5}],
     }
     RandomForest_hyperparameters = {
         # 'bootstrap': [True, False],
-        'max_depth': [500, 1000, 1200, 1500, 1700, 1800, 2000],
-        "n_estimators": [20, 30, 50, 80, 100, 250, 500],
+        'max_depth': [5, 10, 30, 50, 100, 200],
+        "n_estimators": [20, 30, 50, 80, 100, 250, 500, 1000],
         'criterion': ['gini', 'entropy'],
-        'max_features': ['log2', 'sqrt'],  # auto is equal to sqrt
-        # 'min_samples_leaf': [1, 2, 4, 10],
-        'min_samples_split': [3, 5, 6, 8, 10],
-        'class_weight': ['balanced', {0: 1, 1: 3}, {0: 1, 1: 5}],
+        'max_features': [0.3, 0.4, 0.5, 0.6],  # ['log2', 'sqrt'],  # auto is equal to sqrt
+        'min_samples_leaf': [2, 4, 5, 6],
+        # 'min_samples_split': [3, 5, 6, 8, 10],
+        'class_weight': ['balanced', {0: 1, 1: 2}, {0: 1, 1: 3}, {0: 1, 1: 5}],
     }
     XGBoost_hyperparameters = {
         # "n_estimators": [50, 70, 100, 500, 1000, 3000],
@@ -287,20 +287,20 @@ class MLConf:
     }
     DecisionTree_hyperparameters_dist = {
         'max_depth': sp_randint(10, 200),
-        'min_samples_split': sp_randint(2, 200),
-        'min_samples_leaf': sp_randint(1, 10),
+        # 'min_samples_split': sp_randint(2, 200),
+        'min_samples_leaf': sp_randint(2, 10),
         'max_features': sp_randint(1, 11),
         'class_weight': ['balanced'] + [{0: 1, 1: w} for w in range(1, 5)],
     }
     RandomForest_hyperparameters_dist = {
         # 'bootstrap': [True, False],
-        'max_depth': sp_randint(3, 200),
+        'max_depth': sp_randint(5, 200),
         'criterion': ['gini', 'entropy'],
         'max_features': ['sqrt', 'log2'],  # sp_randint(1, 11)
-        'min_samples_leaf': sp_randint(1, 10),
-        'min_samples_split': sp_randint(2, 30),
-        "n_estimators": sp_randint(200, 1000),
-        'class_weight': ['balanced'] + [{0: 1, 1: w} for w in range(1, 5)],
+        'min_samples_leaf': sp_randint(2, 10),
+        # 'min_samples_split': sp_randint(2, 30),
+        "n_estimators": sp_randint(20, 1000),
+        'class_weight': ['balanced'] + [{0: 1, 1: w} for w in range(2, 5)],
     }
     XGBoost_hyperparameters_dist = {
         "n_estimators": sp_randint(50, 4000),
@@ -325,3 +325,12 @@ class MLConf:
         'activation': ['identity', 'logistic', 'tanh', 'relu'],
         'tol': [1e-3, 1e-4],
     }
+
+    # RandomForest_hyperparameters_hp = {
+    #     'max_depth': hp.choice('max_depth', range(1,20)),
+    #     'max_features': hp.choice('max_features', range(1,150)),
+    #     'n_estimators': hp.choice('n_estimators', range(100,500)),
+    #     'criterion': hp.choice('criterion', ["gini", "entropy"])
+    # }
+    #
+    # bayes_class_weight = ['balanced'] + [{0: 1, 1: w} for w in range(2, 5)]

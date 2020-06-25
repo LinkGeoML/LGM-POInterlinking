@@ -35,7 +35,7 @@ class ParamTuning:
                           config.MLConf.DecisionTree_hyperparameters_dist],
         'MLP': [MLPClassifier, config.MLConf.MLP_hyperparameters, config.MLConf.MLP_hyperparameters_dist],
         'RandomForest': [RandomForestClassifier, config.MLConf.RandomForest_hyperparameters,
-                          config.MLConf.RandomForest_hyperparameters_dist],
+                         config.MLConf.RandomForest_hyperparameters_dist],
         'ExtraTrees': [ExtraTreesClassifier, config.MLConf.RandomForest_hyperparameters,
                         config.MLConf.RandomForest_hyperparameters_dist],
         'XGBoost': [XGBClassifier, config.MLConf.XGBoost_hyperparameters, config.MLConf.XGBoost_hyperparameters_dist]
