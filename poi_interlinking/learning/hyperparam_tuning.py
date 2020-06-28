@@ -94,6 +94,16 @@ class ParamTuning:
         for clf_key in config.MLConf.classifiers:
             try:
                 clf = None
+                fit_params = {}
+                if clf_key == 'XGBoost':
+                    X_test = X
+                    y_test = y
+                    fit_params = {
+                        "early_stopping_rounds": 30,
+                        "eval_metric": "mae",
+                        "eval_set": [[X_test, y_test]],
+                        "verbose": 0
+                    }
                 if self.search_method.lower() == 'grid':
                     clf = GridSearchCV(
                         self.clf_names[clf_key][0](), self.clf_names[clf_key][1],
@@ -112,7 +122,7 @@ class ParamTuning:
                         self.clf_names[clf_key][0](), self.clf_names[clf_key][2],
                         cv=self.outer_cv, scoring=config.MLConf.score, verbose=1, n_jobs=self.n_jobs, n_iter=self.n_iter
                     )
-                clf.fit(X, y)
+                clf.fit(X, y, **fit_params)
 
                 hyperparams_found = dict()
                 hyperparams_found['score'] = clf.best_score_
