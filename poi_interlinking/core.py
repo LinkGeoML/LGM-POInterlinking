@@ -153,6 +153,11 @@ class StrategyEvaluator:
                     res[clf][m].append(v)
                 res[clf]['time'].append(time.time() - start_time)
 
+                if hasattr(estimator, 'feature_importances_'):
+                    res[clf]['fimportances'].append(estimator.feature_importances_)
+                elif hasattr(estimator, 'coef_'):
+                    res[clf]['fimportances'].append(estimator.coef_)
+
             fold += 1
 
         for clf, metrics in res.items():
@@ -162,8 +167,14 @@ class StrategyEvaluator:
 
             output = dict()
             for m, v in metrics.items():
-                output[m] = np.mean(v)
+                if m == 'fimportances': output[m] = np.mean(v, axis=0)
+                else: output[m] = np.mean(v)
 
+            # res = dict(
+            #     Classifier=clf, **output,
+            #     fimportances=clf['importances'] if 'importances' in best_clf else None,
+            #     # time=time.time() - start_time
+            # )
             self._print_stats(dict(Classifier=clf, **output))
             writers.write_results(os.path.join(exp_folder, 'output.csv'), dict(Classifier=clf, **output))
 
