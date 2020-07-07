@@ -35,13 +35,13 @@ class StrategyEvaluator:
         tot_time = time.time()
 
         LGMSimVars.per_metric_optValues = config.MLConf.sim_opt_params[self.encoding.lower()]
-        assert (os.path.isfile(os.path.join(config.default_data_path, dataset))), \
-            f'{dataset} dataset does not exist'
 
         f = Features()
         pt = hyperparam_tuning.ParamTuning()
 
         start_time = time.time()
+        assert (os.path.isfile(os.path.join(config.default_data_path, dataset))), \
+            f'{dataset} dataset does not exist'
         f.load_data(os.path.join(config.default_data_path, dataset), self.encoding)
         fX, y = f.build()
         print("Loaded dataset and build features for {} setup; {} sec.".format(
@@ -89,17 +89,16 @@ class StrategyEvaluator:
         date_time = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
         exp_folder = os.path.join('experiments', f'exp_{date_time}')
         os.makedirs(exp_folder)
-
         copyfile('poi_interlinking/config.py', os.path.join(exp_folder, 'config.py'))
-
-        LGMSimVars.per_metric_optValues = config.MLConf.sim_opt_params[self.encoding.lower()]
-        assert (os.path.isfile(os.path.join(config.default_data_path, dataset))), \
-            f'{os.path.join(config.default_data_path, dataset)} dataset does not exist!!!'
 
         f = Features()
         pt = hyperparam_tuning.ParamTuning()
 
+        LGMSimVars.per_metric_optValues = config.MLConf.sim_opt_params[self.encoding.lower()]
+
         start_time = time.time()
+        assert (os.path.isfile(os.path.join(config.default_data_path, dataset))), \
+            f'{os.path.join(config.default_data_path, dataset)} dataset does not exist!!!'
         f.load_data(os.path.join(config.default_data_path, dataset), self.encoding)
         fX, y = f.build()
         print("Loaded dataset and build features for {} setup; {} sec.".format(
@@ -175,6 +174,78 @@ class StrategyEvaluator:
             #     fimportances=clf['importances'] if 'importances' in best_clf else None,
             #     # time=time.time() - start_time
             # )
+            self._print_stats(dict(Classifier=clf, **output))
+            writers.write_results(os.path.join(exp_folder, 'output.csv'), dict(Classifier=clf, **output))
+
+        print("The whole process took {} sec.\n".format(time.time() - tot_time))
+
+    def evaluate_on_pre_split(self, dtrain, dtest):
+        """Train and evaluate supported ML algorithms with custom hyper-parameters on dataset.
+
+        :param dataset: Name of the dataset to use for training and evaluating various classifiers.
+        :type dataset: str
+        """
+        tot_time = time.time()
+
+        # Create folder to store experiments
+        date_time = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
+        exp_folder = os.path.join('experiments', f'exp_{date_time}')
+        os.makedirs(exp_folder)
+        copyfile('poi_interlinking/config.py', os.path.join(exp_folder, 'config.py'))
+
+        LGMSimVars.per_metric_optValues = config.MLConf.sim_opt_params[self.encoding.lower()]
+
+        f = Features()
+        pt = hyperparam_tuning.ParamTuning()
+
+        start_time = time.time()
+        assert (os.path.isfile(os.path.join(config.default_data_path, dtrain))), \
+            f'{os.path.join(config.default_data_path, dtrain)} dataset does not exist!!!'
+        f.load_data(os.path.join(config.default_data_path, dtrain), self.encoding)
+        fX_train, y_train = f.build()
+        print("Loaded train dataset {} and build features for {} setup; {} sec.".format(
+            dtrain, config.MLConf.classification_method, time.time() - start_time))
+
+        start_time = time.time()
+        assert (os.path.isfile(os.path.join(config.default_data_path, dtest))), \
+            f'{os.path.join(config.default_data_path, dtest)} dataset does not exist!!!'
+        f.load_data(os.path.join(config.default_data_path, dtest), self.encoding)
+        fX_test, y_test = f.build()
+        print("Loaded test dataset {} and build features for {} setup; {} sec.".format(
+            dtest, config.MLConf.classification_method, time.time() - start_time))
+
+        res = dict()
+        for clf in config.MLConf.clf_custom_params:
+            start_time = time.time()
+            # 1st phase: train each classifier on the whole train dataset (no folds)
+            estimator = pt.clf_names[clf][0](**config.MLConf.clf_custom_params[clf])
+            estimator = pt.trainClassifier(fX_train, y_train, estimator)
+            print(f"Finished training {clf} model; {time.time() - start_time} sec.")
+
+            # start_time = time.time()
+            # 2nd phase: test each classifier on the test dataset
+            metrics = pt.testClassifier(fX_test, y_test, estimator)
+
+            if clf not in res: res[clf] = defaultdict(list)
+            for m, v in metrics.items():
+                res[clf][m].append(v)
+            res[clf]['time'].append(time.time() - start_time)
+
+            if hasattr(estimator, 'feature_importances_'):
+                res[clf]['fimportances'].append(estimator.feature_importances_)
+            elif hasattr(estimator, 'coef_'):
+                res[clf]['fimportances'].append(estimator.coef_)
+
+        for clf, metrics in res.items():
+            print('Method {}'.format(clf))
+            print('=======', end='')
+            print(len(clf) * '=')
+
+            output = dict()
+            for m, v in metrics.items():
+                if m == 'fimportances': output[m] = np.mean(v, axis=0)
+                else: output[m] = np.mean(v)
+
             self._print_stats(dict(Classifier=clf, **output))
             writers.write_results(os.path.join(exp_folder, 'output.csv'), dict(Classifier=clf, **output))
 

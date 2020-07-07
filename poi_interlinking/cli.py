@@ -55,10 +55,16 @@ def hyperparams_learn(dataset, encoding):
 
 @cli.command('eval', help='evaluate the effectiveness of the proposed methods')
 @click.option('--dataset', default='', help='the dataset to train/evaluate the models.')
+@click.option('--train_set', default='manual_complete.csv', show_default=True, help='the dataset to train the models.')
+@click.option('--test_set', default='auto_full_complete.csv', show_default=True,
+              help='the dataset to evaluate the models.')
 @click.option('--encoding', default='latin', show_default=True, type=click.Choice(['latin', 'global']),
               help='Specify the encoding of toponyms in dataset.')
-def eval_classifiers(dataset, encoding):
-    core.StrategyEvaluator(encoding).evaluate(dataset)
+def eval_classifiers(dataset, train_set, test_set, encoding):
+    if train_set and test_set:
+        core.StrategyEvaluator(encoding).evaluate_on_pre_split(train_set, test_set)
+    else:
+        core.StrategyEvaluator(encoding).evaluate(dataset)
 
 
 cli.add_command(download)

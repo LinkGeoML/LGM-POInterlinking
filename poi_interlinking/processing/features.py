@@ -58,6 +58,8 @@ class Features:
         'FALSE': False
     }
 
+    zip_thres_len = 4
+
     def __init__(self):
         self.clf_method = config.MLConf.classification_method
         self.data_df = None
@@ -84,7 +86,7 @@ class Features:
         y = self.data_df[config.use_cols['status']].to_numpy()
 
         print('Extracting street numbers from addresses...')
-        self.data_df = self.data_df.progress_apply(self.split_address, axis=1, result_type='expand')
+        self.data_df = self.data_df.progress_apply(self._split_address, axis=1)
 
         print('Compute arithmetic features...')
         fX0 = self.data_df.progress_apply(
@@ -244,25 +246,19 @@ class Features:
             s1, s2, sim_measures.LGMSimVars.per_metric_optValues[metric][w_type][0])
         return sim_measures.score_per_term(base_t, mis_t, special_t, metric)
 
-    @staticmethod
-    def split_address(row):
+    def _split_address(self, row):
         for s in ['1', '2']:
             row[f'str_name{s}'] = re.sub(no_match, '', row[f'Address{s}']).strip()
-            strno = set(map(int, re.findall(r'\b\d+', row[f'Address{s}'])))
-
-            if len(strno) > 1:
-                max_no = max(strno)
-                strno.remove(max_no)
-                # row[f'str_name{s}'] += ' ' + str(max_no)
-
-            row[f'str_no{s}'] = ','.join(map(str, strno))
+            row[f'str_no{s}'] = list(filter(lambda value: (len(value) != self.zip_thres_len),
+                                            set(re.findall(r'\b\d+', row[f'Address{s}']))))
 
         return row
 
     @staticmethod
     def arithmetic_features(no1, no2):
-        lno1 = map(int, no1.split(',')) if no1 else [0]
-        lno2 = map(int, no2.split(',')) if no2 else [0]
+        # lno1 = map(int, no1.split(',')) if no1 else [0]
+        lno1 = map(int, no1) if len(no1) else [0]
+        lno2 = map(int, no2) if len(no2) else [0]
 
         return min([abs(a - b) for a in lno1 for b in lno2])
 
