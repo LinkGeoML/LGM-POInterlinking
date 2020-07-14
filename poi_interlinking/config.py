@@ -1,7 +1,7 @@
 # Author: vkaff
 # E-mail: vkaffes@imis.athena-innovation.gr
 
-import numpy as np
+# import numpy as np
 from scipy.stats import randint as sp_randint, expon, truncnorm
 
 
@@ -16,6 +16,7 @@ use_cols = dict(
     lon1='st_x1', lat1='st_y1', lon2='st_x2', lat2='st_y2',
     status='Class'
 )
+all_cols = False
 delimiter = ','
 
 # #: Relative path to the train dataset. This value is used only when the *dtrain* cmd argument is None.
@@ -33,9 +34,10 @@ sort_thres = 0.55
 #: int: Seed used by each of the random number generators.
 seed_no = 13
 
+train_size = 0.1
 test_size = 0.2
 
-save_intermediate_results = False
+save_intermediate_results = True
 
 
 class MLConf:
@@ -70,7 +72,7 @@ class MLConf:
     :vartype XGBoost_hyperparameters_dist: :obj:`dict`
     """
 
-    kfold_no = 10
+    kfold_no = 1
     """int: The number of outer folds that splits the dataset for the k-fold cross-validation.
     """
 
@@ -106,9 +108,9 @@ class MLConf:
     classifiers = [
         # 'SVM',
         # 'DecisionTree',
-        'RandomForest',
+        # 'RandomForest',
         # 'ExtraTrees',
-        # 'XGBoost',
+        'XGBoost',
         # 'MLP'
     ]
     """list of str: Define the classifiers to apply on code execution. Accepted values are: 
@@ -118,7 +120,7 @@ class MLConf:
     - RandomForest
     - ExtraTrees
     - XGBoost
-    - MLP.
+    - MLP
     """
 
     # score = 'roc_auc_ovr_weighted'
@@ -256,8 +258,8 @@ class MLConf:
     XGBoost_hyperparameters = {
         # "n_estimators": [50, 70, 100, 500, 1000, 3000],
         # 'max_depth': [3, 5, 10, 30, 50, 70, 100],
-        "n_estimators": [5, 10, 15, 20, 50, 70, 100],
-        'max_depth': [2, 3, 5, 7, 8, 10, 20, 30],
+        "n_estimators": [5, 10, 15, 20, 50, 70, 100, 200, 500],
+        'max_depth': [3, 5, 8, 10, 20, 30, 50],
         # hyperparameters to avoid overfitting
         # 'eta': list(np.linspace(0.01, 0.2, 10)),  # 'learning_rate'
         # 'gamma': [0, 1, 5],
@@ -303,13 +305,13 @@ class MLConf:
         'class_weight': ['balanced'] + [{0: 1, 1: w} for w in range(2, 5)],
     }
     XGBoost_hyperparameters_dist = {
-        "n_estimators": sp_randint(50, 4000),
-        'max_depth': sp_randint(3, 200),
+        "n_estimators": sp_randint(50, 2000),
+        'max_depth': sp_randint(3, 50),
         # 'eta': expon(loc=0.01, scale=0.1),  # 'learning_rate'
         # hyperparameters to avoid overfitting
         'gamma': sp_randint(0, 5),
         # 'subsample': truncnorm(0.7, 1),
-        'subsample': truncnorm(0.4, 0.7),
+        'subsample': truncnorm(0.4, 0.8),
         # 'colsample_bytree': truncnorm(0.8, 1),
         # 'min_child_weight': sp_randint(1, 10),
         # 'scale_pos_weight': sp_randint(1, 5),

@@ -259,6 +259,12 @@ class StaticValues:
         'street_numbers_diff',
     ] + [f'{x}_on_street_names' for x in sim_features_cols]
 
+    extra_feature_cols = [
+        'SimName',
+        'SimAddress',
+        'SimSemantic'
+    ]
+
     final_cols = []
 
     sim_metrics = {
@@ -283,26 +289,35 @@ class StaticValues:
         del self.final_cols[:]
 
         if sim_type == 'lgm':
-            self.final_cols += self.address_feature_cols + [
-                f'{x}_{y}_on_street_names' for x in ['Sorted', 'LGM']
-                for y in self.sim_features_cols if y.lower() != 'jaro_winkler_sorted'
-            ]
-            self.final_cols += [f'{x}_on_street_names' for x in self.individual_lgm_feature_cols]
+            # self.final_cols += self.address_feature_cols + [
+            #     f'{x}_{y}_on_street_names' for x in ['Sorted', 'LGM']
+            #     for y in self.sim_features_cols if y.lower() != 'jaro_winkler_sorted'
+            # ]
+            # self.final_cols += [f'{x}_on_street_names' for x in self.individual_lgm_feature_cols]
+
+            self.final_cols += self.address_feature_cols
             self.final_cols += self.sim_features_cols + [
                 f'{x}_{y}' for x in ['Sorted', 'LGM']
                 for y in self.sim_features_cols if y.lower() != 'jaro_winkler_sorted'
             ]
             self.final_cols += self.individual_lgm_feature_cols
+
             self.final_cols += self.spatial_feature_cols
+            if config.all_cols: self.final_cols += self.extra_feature_cols
         elif sim_type == 'sorted':
-            self.final_cols += self.address_feature_cols + [
-                f'{x}_{y}_on_street_names' for x in ['Sorted']
-                for y in self.sim_features_cols if y.lower() != 'jaro_winkler_sorted'
-            ]
+            # self.final_cols += self.address_feature_cols + [
+            #     f'{x}_{y}_on_street_names' for x in ['Sorted']
+            #     for y in self.sim_features_cols if y.lower() != 'jaro_winkler_sorted'
+            # ]
+
+            self.final_cols += self.address_feature_cols
             self.final_cols += self.sim_features_cols + [
                 f'{x}_{y}' for x in ['Sorted']
                 for y in self.sim_features_cols if y.lower() != 'jaro_winkler_sorted'
             ]
+
             self.final_cols += self.spatial_feature_cols
+            if config.all_cols: self.final_cols += self.extra_feature_cols
         else:  # basic or whatever
             self.final_cols = self.address_feature_cols + self.sim_features_cols + self.spatial_feature_cols
+            if config.all_cols: self.final_cols += self.extra_feature_cols

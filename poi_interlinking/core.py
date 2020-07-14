@@ -179,7 +179,7 @@ class StrategyEvaluator:
 
         print("The whole process took {} sec.\n".format(time.time() - tot_time))
 
-    def evaluate_on_pre_split(self, dtrain, dtest):
+    def evaluate_on_pre_split(self, dtrain, dtest, is_build=False):
         """Train and evaluate supported ML algorithms with custom hyper-parameters on dataset.
 
         :param dataset: Name of the dataset to use for training and evaluating various classifiers.
@@ -202,17 +202,36 @@ class StrategyEvaluator:
         assert (os.path.isfile(os.path.join(config.default_data_path, dtrain))), \
             f'{os.path.join(config.default_data_path, dtrain)} dataset does not exist!!!'
         f.load_data(os.path.join(config.default_data_path, dtrain), self.encoding)
-        fX_train, y_train = f.build()
-        print("Loaded train dataset {} and build features for {} setup; {} sec.".format(
-            dtrain, config.MLConf.classification_method, time.time() - start_time))
+        if not is_build:
+            fX_train, y_train = f.build()
+            print("Loaded train dataset {} and build features for {} setup; {} sec.".format(
+                dtrain, config.MLConf.classification_method, time.time() - start_time))
+        else:
+            tmp_df = f.get_loaded_data()
+            y_train = tmp_df[config.use_cols['status']].to_numpy()
+            tmp_df.drop(columns=[config.use_cols['status'], 'index'], inplace=True)
+            fX_train = tmp_df.to_numpy()
+            print("Loaded train dataset {} with pre-built features; {} sec.".format(dtrain, time.time() - start_time))
+
+        print(f'Using {config.train_size * 100}% of the training dataset.')
+        skf = StratifiedShuffleSplit(n_splits=1, random_state=config.seed_no, train_size=config.train_size)
+        for train_idxs, test_idxs in skf.split(fX_train, y_train):
+            fX_train, y_train = fX_train[train_idxs], y_train[train_idxs]
 
         start_time = time.time()
         assert (os.path.isfile(os.path.join(config.default_data_path, dtest))), \
             f'{os.path.join(config.default_data_path, dtest)} dataset does not exist!!!'
         f.load_data(os.path.join(config.default_data_path, dtest), self.encoding)
-        fX_test, y_test = f.build()
-        print("Loaded test dataset {} and build features for {} setup; {} sec.".format(
-            dtest, config.MLConf.classification_method, time.time() - start_time))
+        if not is_build:
+            fX_test, y_test = f.build()
+            print("Loaded test dataset {} and build features for {} setup; {} sec.".format(
+                dtest, config.MLConf.classification_method, time.time() - start_time))
+        else:
+            tmp_df = f.get_loaded_data()
+            y_test = tmp_df[config.use_cols['status']].to_numpy()
+            tmp_df.drop(columns=[config.use_cols['status'], 'index'], inplace=True)
+            fX_test = tmp_df.to_numpy()
+            print("Loaded test dataset {} with pre-built features; {} sec.".format(dtest, time.time() - start_time))
 
         res = dict()
         for clf in config.MLConf.clf_custom_params:

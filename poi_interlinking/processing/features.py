@@ -42,16 +42,16 @@ class Features:
     #     "alpha2_cc2",
     # ]
 
-    dtypes = {
-        config.use_cols['s1']: str, config.use_cols['s2']: str,
-        config.use_cols['addr1']: str, config.use_cols['addr2']: str,
-        config.use_cols['lon1']: float, config.use_cols['lon2']: float,
-        config.use_cols['lat1']: float, config.use_cols['lat2']: float,
-        config.use_cols['status']: bool,
-        # 'gid1': np.int32, 'gid2': np.int32,
-        # 'alphabet1': str, 'alphabet2': str,
-        # 'alpha2_cc1': str, 'alpha2_cc2': str
-    }
+    # dtypes = {
+    #     config.use_cols['s1']: str, config.use_cols['s2']: str,
+    #     config.use_cols['addr1']: str, config.use_cols['addr2']: str,
+    #     config.use_cols['lon1']: float, config.use_cols['lon2']: float,
+    #     config.use_cols['lat1']: float, config.use_cols['lat2']: float,
+    #     config.use_cols['status']: bool,
+    #     # 'gid1': np.int32, 'gid2': np.int32,
+    #     # 'alphabet1': str, 'alphabet2': str,
+    #     # 'alpha2_cc1': str, 'alpha2_cc2': str
+    # }
 
     d = {
         'TRUE': True,
@@ -66,7 +66,8 @@ class Features:
 
     def load_data(self, fname, encoding):
         self.data_df = pd.read_csv(fname, sep=config.delimiter, names=config.fieldnames,  # dtype=self.dtypes,
-                                   usecols=config.use_cols.values(), na_filter=True, encoding='utf8')
+                                   usecols=None if config.all_cols else config.use_cols.values(),
+                                   na_filter=True, encoding='utf8')
         self.data_df.fillna('', inplace=True)
 
         sim_measures.LGMSimVars().load_freq_terms(encoding)

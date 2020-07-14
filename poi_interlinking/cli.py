@@ -60,9 +60,10 @@ def hyperparams_learn(dataset, encoding):
               help='the dataset to evaluate the models.')
 @click.option('--encoding', default='latin', show_default=True, type=click.Choice(['latin', 'global']),
               help='Specify the encoding of toponyms in dataset.')
-def eval_classifiers(dataset, train_set, test_set, encoding):
+@click.option('--is_build', is_flag=True, help='Whether loaded datasets contain raw data or already built features.')
+def eval_classifiers(dataset, train_set, test_set, is_build, encoding):
     if train_set and test_set:
-        core.StrategyEvaluator(encoding).evaluate_on_pre_split(train_set, test_set)
+        core.StrategyEvaluator(encoding).evaluate_on_pre_split(train_set, test_set, is_build)
     else:
         core.StrategyEvaluator(encoding).evaluate(dataset)
 
