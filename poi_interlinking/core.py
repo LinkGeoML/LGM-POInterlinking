@@ -77,7 +77,7 @@ class StrategyEvaluator:
 
         print("The whole process took {} sec.".format(time.time() - tot_time))
 
-    def evaluate(self, dataset):
+    def evaluate(self, dataset, is_build=False):
         """Train and evaluate supported ML algorithms with custom hyper-parameters on dataset.
 
         :param dataset: Name of the dataset to use for training and evaluating various classifiers.
@@ -100,9 +100,16 @@ class StrategyEvaluator:
         assert (os.path.isfile(os.path.join(config.default_data_path, dataset))), \
             f'{os.path.join(config.default_data_path, dataset)} dataset does not exist!!!'
         f.load_data(os.path.join(config.default_data_path, dataset), self.encoding)
-        fX, y = f.build()
-        print("Loaded dataset and build features for {} setup; {} sec.".format(
-            config.MLConf.classification_method, time.time() - start_time))
+        if not is_build:
+            fX, y = f.build()
+            print("Loaded dataset and build features for {} setup; {} sec.".format(
+                config.MLConf.classification_method, time.time() - start_time))
+        else:
+            tmp_df = f.get_loaded_data()
+            y = tmp_df[config.use_cols['status']].to_numpy()
+            tmp_df.drop(columns=[config.use_cols['status'], 'index'], inplace=True)
+            fX = tmp_df.to_numpy()
+            print("Loaded dataset with pre-built features; {} sec.".format(time.time() - start_time))
 
         # fX_train, fX_test, y_train, y_test, train_set_df, test_set_df = train_test_split(
         #     fX, y, f.get_loaded_data(), stratify=y, test_size=config.test_size, random_state=config.seed_no)

@@ -65,7 +65,7 @@ def eval_classifiers(dataset, train_set, test_set, is_build, encoding):
     if train_set and test_set:
         core.StrategyEvaluator(encoding).evaluate_on_pre_split(train_set, test_set, is_build)
     else:
-        core.StrategyEvaluator(encoding).evaluate(dataset)
+        core.StrategyEvaluator(encoding).evaluate(dataset, is_build)
 
 
 cli.add_command(download)
