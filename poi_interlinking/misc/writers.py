@@ -6,18 +6,19 @@ from poi_interlinking import helpers
 from poi_interlinking import config
 
 
-def save_features(fpath, data, delimiter=','):
+def save_features(fpath, data, delimiter=',', cols=None):
     h = helpers.StaticValues(config.MLConf.classification_method)
-    cols = ['index'] + h.final_cols + ['Class']
+    col_names = h.final_cols + ['class'] if cols is None else cols
+    col_format = ['%1.3f'] * (len(col_names) - 1) + ['%i']
     # TODO: transform to metric (temporal for saving)
-    data[:, 1] -= 1
-    data[:, 1] *= -1
-    data[:, -2] -= 1
-    data[:, -2] *= -1
+    # data[:, 1] -= 1
+    # data[:, 1] *= -1
+    # data[:, -2] -= 1
+    # data[:, -2] *= -1
 
     np.savetxt(
-        fpath, data, header=f'{delimiter}'.join(cols), comments='',
-        fmt=f'{delimiter}'.join(['%i'] + ['%1.3f']*len(h.final_cols) + ['%i'])
+        fpath, data, header=f'{delimiter}'.join(['index'] + col_names), comments='',
+        fmt=f'{delimiter}'.join(['%i'] + col_format)
     )
 
 

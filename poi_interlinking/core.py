@@ -138,10 +138,11 @@ class StrategyEvaluator:
                         np.arange(0, y_test.shape[0])[:, np.newaxis], fX_test, y_test[:, np.newaxis]
                     ), axis=1))
 
-                train_set_df.reset_index(drop=True).to_csv(os.path.join(fold_path, 'train.csv'), index=True,
-                                                           index_label='index')
-                test_set_df.reset_index(drop=True).to_csv(os.path.join(fold_path, 'test.csv'), index=True,
-                                                          index_label='index')
+                # if not is_build:
+                #     train_set_df.reset_index(drop=True).to_csv(os.path.join(fold_path, 'train.csv'), index=True,
+                #                                                index_label='index')
+                #     test_set_df.reset_index(drop=True).to_csv(os.path.join(fold_path, 'test.csv'), index=True,
+                #                                               index_label='index')
 
             for clf in config.MLConf.clf_custom_params:
                 start_time = time.time()
@@ -153,6 +154,24 @@ class StrategyEvaluator:
                 # start_time = time.time()
                 # 2nd phase: test each classifier on the test dataset
                 metrics = pt.testClassifier(fX_test, y_test, estimator)
+
+                if config.save_intermediate_results:
+                    writers.save_features(
+                        os.path.join(fold_path, f'train_proba_{clf}.csv'),
+                        np.concatenate((
+                            (train_idxs + 1)[:, np.newaxis], estimator.predict_proba(fX_train),
+                            y_train[:, np.newaxis]
+                        ), axis=1),
+                        cols=['prob_class_0', 'prob_class_1', 'class']
+                    )
+                    writers.save_features(
+                        os.path.join(fold_path, f'test_proba_{clf}.csv'),
+                        np.concatenate((
+                            (test_idxs + 1)[:, np.newaxis], estimator.predict_proba(fX_test),
+                            y_test[:, np.newaxis]
+                        ), axis=1),
+                        cols=['prob_class_0', 'prob_class_1', 'class']
+                    )
 
                 if clf not in res: res[clf] = defaultdict(list)
                 for m, v in metrics.items():

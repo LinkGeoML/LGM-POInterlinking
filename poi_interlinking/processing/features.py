@@ -92,6 +92,10 @@ class Features:
         print('Compute arithmetic features...')
         fX0 = self.data_df.progress_apply(
             lambda x: self.arithmetic_features(x['str_no1'], x['str_no2']), axis=1).to_numpy()
+        fX2 = np.asarray(list(tqdm(
+            map(self._compute_basic_features, self.data_df['str_name1'], self.data_df['str_name2']),
+            total=len(self.data_df.index)
+        )), dtype=float)
 
         print(f'Computing features of the {self.clf_method.lower()} group...')
         if self.clf_method.lower() == 'basic':
@@ -101,10 +105,10 @@ class Features:
                     self.data_df[config.use_cols['s2']]),
                 total=len(self.data_df.index)
             )), dtype=float)
-            fX2 = np.asarray(list(tqdm(
-                map(self._compute_basic_features, self.data_df['str_name1'], self.data_df['str_name2']),
-                total=len(self.data_df.index)
-            )), dtype=float)
+            # fX2 = np.asarray(list(tqdm(
+            #     map(self._compute_basic_features, self.data_df['str_name1'], self.data_df['str_name2']),
+            #     total=len(self.data_df.index)
+            # )), dtype=float)
         elif self.clf_method.lower() == 'basic_sorted':
             fX1 = list(tqdm(
                 map(self._compute_sorted_features,
@@ -112,19 +116,19 @@ class Features:
                     self.data_df[config.use_cols['s2']]),
                 total=len(self.data_df.index)
             ))
-            fX2 = list(tqdm(
-                map(self._compute_sorted_features, self.data_df['str_name1'], self.data_df['str_name2']),
-                total=len(self.data_df.index)
-            ))
+            # fX2 = list(tqdm(
+            #     map(self._compute_sorted_features, self.data_df['str_name1'], self.data_df['str_name2']),
+            #     total=len(self.data_df.index)
+            # ))
         else:  # lgm
             fX1 = list(tqdm(
                 map(self.compute_features, self.data_df[config.use_cols['s1']], self.data_df[config.use_cols['s2']]),
                 total=len(self.data_df.index)
             ))
-            fX2 = list(tqdm(
-                map(self.compute_features, self.data_df['str_name1'], self.data_df['str_name2']),
-                total=len(self.data_df.index)
-            ))
+            # fX2 = list(tqdm(
+            #     map(self.compute_features, self.data_df['str_name1'], self.data_df['str_name2']),
+            #     total=len(self.data_df.index)
+            # ))
 
         # spatial features
         print('Computing spatial features...')

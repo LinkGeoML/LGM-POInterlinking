@@ -137,7 +137,7 @@ class MLConf:
             # 'C': 1.0, 'max_iter': 3000,
             # best
             'C': 100, 'class_weight': 'balanced', 'gamma': 0.01, 'kernel': 'sigmoid', 'max_iter': 10000,
-            'random_state': seed_no
+            'probability': True, 'random_state': seed_no
         },
         'DecisionTree': {
             # default
@@ -227,6 +227,7 @@ class MLConf:
             'C': [0.01, 0.1, 1, 10, 25, 50, 100, 300],
             'max_iter': [10000],
             'class_weight': ['balanced', {0: 1, 1: 3}, {0: 1, 1: 5}],
+            'probability': True
         },
         {
             'kernel': ['poly'],
@@ -235,6 +236,7 @@ class MLConf:
             'C': [0.01, 0.1, 1, 10, 25, 50, 100],
             'max_iter': [30000],
             'class_weight': ['balanced', {0: 1, 1: 3}, {0: 1, 1: 5}],
+            'probability': True
         },
     ]
     DecisionTree_hyperparameters = {
@@ -285,7 +287,8 @@ class MLConf:
         'C': expon(scale=100), 'gamma': expon(scale=.1),
         'kernel': ['rbf'],
         'class_weight': ['balanced'],
-        'max_iter': [10000]
+        'max_iter': [10000],
+        'probability': True
     }
     DecisionTree_hyperparameters_dist = {
         'max_depth': sp_randint(10, 200),
