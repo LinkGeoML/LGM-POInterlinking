@@ -130,12 +130,12 @@ class StrategyEvaluator:
                 writers.save_features(
                     os.path.join(fold_path, 'train_features_build.csv'),
                     np.concatenate((
-                        np.arange(0, y_train.shape[0])[:, np.newaxis], fX_train, y_train[:, np.newaxis]
+                        (train_idxs + 1)[:, np.newaxis], fX_train, y_train[:, np.newaxis]
                     ), axis=1))
                 writers.save_features(
                     os.path.join(fold_path, 'test_features_build.csv'),
                     np.concatenate((
-                        np.arange(0, y_test.shape[0])[:, np.newaxis], fX_test, y_test[:, np.newaxis]
+                        (test_idxs + 1)[:, np.newaxis], fX_test, y_test[:, np.newaxis]
                     ), axis=1))
 
                 # if not is_build:
