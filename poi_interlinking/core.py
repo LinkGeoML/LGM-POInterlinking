@@ -160,17 +160,17 @@ class StrategyEvaluator:
                         os.path.join(fold_path, f'train_proba_{clf}.csv'),
                         np.concatenate((
                             (train_idxs + 1)[:, np.newaxis], estimator.predict_proba(fX_train),
-                            y_train[:, np.newaxis]
+                            estimator.predict(fX_train)[:, np.newaxis]  # , y_train[:, np.newaxis]
                         ), axis=1),
-                        cols=['prob_class_0', 'prob_class_1', 'class']
+                        cols=['prob_class_0', 'prob_class_1', 'pred_class']
                     )
                     writers.save_features(
                         os.path.join(fold_path, f'test_proba_{clf}.csv'),
                         np.concatenate((
                             (test_idxs + 1)[:, np.newaxis], estimator.predict_proba(fX_test),
-                            y_test[:, np.newaxis]
+                            estimator.predict(fX_test)[:, np.newaxis]  # , y_test[:, np.newaxis]
                         ), axis=1),
-                        cols=['prob_class_0', 'prob_class_1', 'class']
+                        cols=['prob_class_0', 'prob_class_1', 'pred_class']
                     )
 
                 if clf not in res: res[clf] = defaultdict(list)
