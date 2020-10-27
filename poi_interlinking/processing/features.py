@@ -130,21 +130,25 @@ class Features:
             #     total=len(self.data_df.index)
             # ))
 
-        # spatial features
-        print('Computing spatial features...')
-        print('Changing projection of coordinates to epsg:3857...')
-        proj = Projection()
-        self.data_df['p1'] = self.data_df.progress_apply(
-            lambda x: proj.change_projection(x[config.use_cols['lon1']], x[config.use_cols['lat1']]), axis=1)
-        self.data_df['p2'] = self.data_df.progress_apply(
-            lambda x: proj.change_projection(x[config.use_cols['lon2']], x[config.use_cols['lat2']]), axis=1)
+        if all(x in config.use_cols.values() for x in ['lon1', 'lat1', 'lon2', 'lat2']):
+            # spatial features
+            print('Computing spatial features...')
+            print('Changing projection of coordinates to epsg:3857...')
+            proj = Projection()
+            self.data_df['p1'] = self.data_df.progress_apply(
+                lambda x: proj.change_projection(x[config.use_cols['lon1']], x[config.use_cols['lat1']]), axis=1)
+            self.data_df['p2'] = self.data_df.progress_apply(
+                lambda x: proj.change_projection(x[config.use_cols['lon2']], x[config.use_cols['lat2']]), axis=1)
 
-        fX3 = np.asarray(list(tqdm(
-                map(get_distance,
-                    self.data_df['p1'],
-                    self.data_df['p2']),
-                total=len(self.data_df.index)
-            )), dtype=float)
+            fX3 = np.asarray(list(tqdm(
+                    map(get_distance,
+                        self.data_df['p1'],
+                        self.data_df['p2']),
+                    total=len(self.data_df.index)
+                )), dtype=float)
+        else:
+            print('Coords are not provided')
+            fX3 = np.zeros(fX0[:, np.newaxis].shape)
 
         # normalize values
         fX0 = preprocessing.MinMaxScaler().fit_transform(fX0[:, np.newaxis])
@@ -253,9 +257,9 @@ class Features:
 
     def _split_address(self, row):
         for s in ['1', '2']:
-            row[f'str_name{s}'] = re.sub(no_match, '', row[f'Address{s}']).strip()
+            row[f'str_name{s}'] = re.sub(no_match, '', row[f'{config.use_cols["addr" + s]}']).strip()
             row[f'str_no{s}'] = list(filter(lambda value: (len(value) != self.zip_thres_len),
-                                            set(re.findall(r'\b\d+', row[f'Address{s}']))))
+                                            set(re.findall(r'\b\d+', row[f'{config.use_cols["addr" + s]}']))))
 
         return row
 
@@ -269,3 +273,6 @@ class Features:
 
     def get_loaded_data(self):
         return self.data_df
+
+    def get_index_col(self):
+        return self.data_df[config.use_cols['idx']].to_numpy()

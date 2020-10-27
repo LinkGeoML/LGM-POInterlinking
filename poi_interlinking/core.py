@@ -104,6 +104,13 @@ class StrategyEvaluator:
             fX, y = f.build()
             print("Loaded dataset and build features for {} setup; {} sec.".format(
                 config.MLConf.classification_method, time.time() - start_time))
+
+            if config.save_intermediate_results:
+                writers.save_features(
+                    os.path.join(exp_folder, 'features_build.csv'),
+                    np.concatenate((
+                        f.get_index_col()[:, np.newaxis], fX, y[:, np.newaxis]
+                    ), axis=1))
         else:
             tmp_df = f.get_loaded_data()
             y = tmp_df[config.use_cols['status']].to_numpy()
@@ -126,17 +133,17 @@ class StrategyEvaluator:
             if config.save_intermediate_results:
                 fold_path = os.path.join(exp_folder, f'fold_{fold}')
                 os.makedirs(fold_path)
-
-                writers.save_features(
-                    os.path.join(fold_path, 'train_features_build.csv'),
-                    np.concatenate((
-                        (train_idxs + 1)[:, np.newaxis], fX_train, y_train[:, np.newaxis]
-                    ), axis=1))
-                writers.save_features(
-                    os.path.join(fold_path, 'test_features_build.csv'),
-                    np.concatenate((
-                        (test_idxs + 1)[:, np.newaxis], fX_test, y_test[:, np.newaxis]
-                    ), axis=1))
+            #
+            #     writers.save_features(
+            #         os.path.join(fold_path, 'train_features_build.csv'),
+            #         np.concatenate((
+            #             (train_idxs + 1)[:, np.newaxis], fX_train, y_train[:, np.newaxis]
+            #         ), axis=1))
+            #     writers.save_features(
+            #         os.path.join(fold_path, 'test_features_build.csv'),
+            #         np.concatenate((
+            #             (test_idxs + 1)[:, np.newaxis], fX_test, y_test[:, np.newaxis]
+            #         ), axis=1))
 
                 # if not is_build:
                 #     train_set_df.reset_index(drop=True).to_csv(os.path.join(fold_path, 'train.csv'), index=True,
@@ -159,7 +166,7 @@ class StrategyEvaluator:
                     writers.save_features(
                         os.path.join(fold_path, f'train_proba_{clf}.csv'),
                         np.concatenate((
-                            (train_idxs + 1)[:, np.newaxis], estimator.predict_proba(fX_train),
+                            f.get_index_col()[train_idxs][:, np.newaxis], estimator.predict_proba(fX_train),
                             estimator.predict(fX_train)[:, np.newaxis]  # , y_train[:, np.newaxis]
                         ), axis=1),
                         cols=['prob_class_0', 'prob_class_1', 'pred_class']
@@ -167,7 +174,7 @@ class StrategyEvaluator:
                     writers.save_features(
                         os.path.join(fold_path, f'test_proba_{clf}.csv'),
                         np.concatenate((
-                            (test_idxs + 1)[:, np.newaxis], estimator.predict_proba(fX_test),
+                            f.get_index_col()[test_idxs][:, np.newaxis], estimator.predict_proba(fX_test),
                             estimator.predict(fX_test)[:, np.newaxis]  # , y_test[:, np.newaxis]
                         ), axis=1),
                         cols=['prob_class_0', 'prob_class_1', 'pred_class']
@@ -321,7 +328,7 @@ class StrategyEvaluator:
 
             table = BeautifulTable()
             fcols = helpers.StaticValues(config.MLConf.classification_method).final_cols
-            table.column_headers = headers
+            table.columns.header = headers
 
             for feature_name, val in zip(np.asarray(fcols, object)[~importances.mask][indices],
                                          importances.compressed()[indices]):
