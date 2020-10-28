@@ -15,7 +15,7 @@ use_cols = dict(
     # s1='Name1', s2='Name2', addr1='Address1', addr2='Address2',
     # lon1='st_x1', lat1='st_y1', lon2='st_x2', lat2='st_y2',
     # status='Class'
-    idx='idx',
+    index='idx',
     ID1='A.ID', ID2='B.ID',
     s1='A.name', s2='B.name', addr1='A.addr', addr2='B.addr',
     status='class'
@@ -38,7 +38,6 @@ sort_thres = 0.55
 #: int: Seed used by each of the random number generators.
 seed_no = 13
 
-train_size = 0.1
 test_size = 0.2
 
 save_intermediate_results = True

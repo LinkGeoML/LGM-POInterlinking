@@ -26,7 +26,7 @@ def download(bbox):
                    'It requires once to run: python -m nltk.downloader \'punkt\'')
 @click.option('--encoding', default='latin', show_default=True, type=click.Choice(['latin', 'global']),
               help='specify the alphabet encoding of toponyms in dataset.')
-@click.option('--exp_path', help='Prefix to be used in naming the file with the extracted frequent terms.')
+@click.option('--exp_path', default='', help='Prefix to be used in naming the file with the extracted frequent terms.')
 def freq_terms(train_set, encoding, exp_path):
     ft.extract_freqterms(train_set, encoding, exp_path)
 

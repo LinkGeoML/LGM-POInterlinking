@@ -272,7 +272,7 @@ class Features:
         return min([abs(a - b) for a in lno1 for b in lno2])
 
     def get_loaded_data(self):
-        return self.data_df
+        return self.data_df.copy()
 
     def get_index_col(self):
-        return self.data_df[config.use_cols['idx']].to_numpy()
+        return self.data_df[config.use_cols['index']].to_numpy()

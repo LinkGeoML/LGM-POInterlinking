@@ -114,7 +114,7 @@ class StrategyEvaluator:
         else:
             tmp_df = f.get_loaded_data()
             y = tmp_df[config.use_cols['status']].to_numpy()
-            tmp_df.drop(columns=[config.use_cols['status'], 'index'], inplace=True)
+            tmp_df.drop(columns=[config.use_cols['status'], config.use_cols['index']], inplace=True)
             fX = tmp_df.to_numpy()
             print("Loaded dataset with pre-built features; {} sec.".format(time.time() - start_time))
 
@@ -242,12 +242,12 @@ class StrategyEvaluator:
         else:
             tmp_df = f.get_loaded_data()
             y_train = tmp_df[config.use_cols['status']].to_numpy()
-            tmp_df.drop(columns=[config.use_cols['status'], 'index'], inplace=True)
+            tmp_df.drop(columns=[config.use_cols['status'], config.use_cols['index']], inplace=True)
             fX_train = tmp_df.to_numpy()
             print("Loaded train dataset {} with pre-built features; {} sec.".format(dtrain, time.time() - start_time))
 
-        print(f'Using {config.train_size * 100}% of the training dataset.')
-        skf = StratifiedShuffleSplit(n_splits=1, random_state=config.seed_no, train_size=config.train_size)
+        print(f'Using {(100 - config.test_size) * 100}% of the training dataset.')
+        skf = StratifiedShuffleSplit(n_splits=1, random_state=config.seed_no, test_size=config.test_size)
         for train_idxs, test_idxs in skf.split(fX_train, y_train):
             fX_train, y_train = fX_train[train_idxs], y_train[train_idxs]
 
@@ -262,7 +262,7 @@ class StrategyEvaluator:
         else:
             tmp_df = f.get_loaded_data()
             y_test = tmp_df[config.use_cols['status']].to_numpy()
-            tmp_df.drop(columns=[config.use_cols['status'], 'index'], inplace=True)
+            tmp_df.drop(columns=[config.use_cols['status'], config.use_cols['index']], inplace=True)
             fX_test = tmp_df.to_numpy()
             print("Loaded test dataset {} with pre-built features; {} sec.".format(dtest, time.time() - start_time))
 
@@ -332,7 +332,7 @@ class StrategyEvaluator:
 
             for feature_name, val in zip(np.asarray(fcols, object)[~importances.mask][indices],
                                          importances.compressed()[indices]):
-                table.append_row([feature_name, val])
+                table.rows.append([feature_name, val])
 
             table.set_style(BeautifulTable.STYLE_RST)
             print(table)
