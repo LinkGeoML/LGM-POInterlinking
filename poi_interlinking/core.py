@@ -201,12 +201,8 @@ class StrategyEvaluator:
             for m, v in metrics.items():
                 if m == 'fimportances': output[m] = np.mean(v, axis=0)
                 else: output[m] = np.mean(v)
+                if m == 'F1_score': output[f'{m}_std'] = np.std(v)
 
-            # res = dict(
-            #     Classifier=clf, **output,
-            #     fimportances=clf['importances'] if 'importances' in best_clf else None,
-            #     # time=time.time() - start_time
-            # )
             self._print_stats(dict(Classifier=clf, **output))
             writers.write_results(os.path.join(exp_folder, 'output.csv'), dict(Classifier=clf, **output))
 
@@ -305,18 +301,8 @@ class StrategyEvaluator:
 
     @staticmethod
     def _print_stats(params):
-        print("| Method\t& Accuracy\t& Precision\t& Prec-weighted\t& Recall\t& Rec-weighted"
-              "\t& F1-Score\t& F1-weighted"
-              "\t& Roc-AUC\t& ROC-AUC-weighted"
-              "\t& Time (sec)")
-        print("||{}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}\t& {}".format(
-            params['Classifier'],
-            params['Accuracy'],
-            params['Precision'], params['Precision_weighted'],
-            params['Recall'], params['Recall_weighted'],
-            params['F1_score'], params['F1_score_weighted'],
-            params['roc_auc'], params['roc_auc_weighted'],
-            params['time']))
+        print('|', '\t& '.join(helpers.Printing.cols.keys()))
+        print('||', '\t& '.join(map(str, [params[v] for _, v in helpers.Printing.cols.items()])))
 
         if 'fimportances' in params and params['fimportances'] is not None:
             importances = np.ma.masked_equal(params['fimportances'], 0.0)

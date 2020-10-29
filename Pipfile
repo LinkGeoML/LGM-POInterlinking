@@ -27,6 +27,7 @@ Shapely = "*"
 Rtree = "*"
 pyproj = "*"
 beautifultable = "*"
+pyxdameraulevenshtein = "*"
 
 [requires]
 python_version = "3.8"
