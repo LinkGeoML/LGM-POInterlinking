@@ -127,8 +127,9 @@ class StrategyEvaluator:
         res = dict()
         for train_idxs, test_idxs in skf.split(fX, y):
             print(f'Evaluating models on fold {fold}...')
-            fX_train, fX_test, train_set_df = fX[train_idxs], fX[test_idxs], f.get_loaded_data().iloc[train_idxs]
-            y_train, y_test, test_set_df = y[train_idxs], y[test_idxs], f.get_loaded_data().iloc[test_idxs]
+            # fX_train, fX_test, train_set_df = fX[train_idxs], fX[test_idxs], f.get_loaded_data().iloc[train_idxs]
+            fX_train, fX_test = fX[train_idxs], fX[test_idxs]
+            y_train, y_test, _ = y[train_idxs], y[test_idxs], f.get_loaded_data().iloc[test_idxs]
 
             if config.save_intermediate_results:
                 fold_path = os.path.join(exp_folder, f'fold_{fold}')
@@ -156,7 +157,11 @@ class StrategyEvaluator:
                 # 1st phase: train each classifier on the whole train dataset (no folds)
                 estimator = pt.clf_names[clf][0](**config.MLConf.clf_custom_params[clf])
                 estimator = pt.trainClassifier(fX_train, y_train, estimator)
-                print(f"Finished training {clf} model; {time.time() - start_time} sec.")
+                decision_tree_depth = f"tree reached depth of {estimator.get_depth()};" \
+                    if hasattr(estimator, 'get_depth') else ''
+                print(f"Finished training {clf} model;"
+                      f"{decision_tree_depth}"
+                      f"{time.time() - start_time} sec.")
 
                 # start_time = time.time()
                 # 2nd phase: test each classifier on the test dataset
@@ -268,7 +273,11 @@ class StrategyEvaluator:
             # 1st phase: train each classifier on the whole train dataset (no folds)
             estimator = pt.clf_names[clf][0](**config.MLConf.clf_custom_params[clf])
             estimator = pt.trainClassifier(fX_train, y_train, estimator)
-            print(f"Finished training {clf} model; {time.time() - start_time} sec.")
+            decision_tree_depth = f"tree reached depth of {estimator.get_depth()};" \
+                if hasattr(estimator, 'get_depth') else ''
+            print(f"Finished training {clf} model;"
+                  f"{decision_tree_depth}"
+                  f"{time.time() - start_time} sec.")
 
             # start_time = time.time()
             # 2nd phase: test each classifier on the test dataset

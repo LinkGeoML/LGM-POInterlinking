@@ -1,33 +1,30 @@
 [[source]]
-name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
-
-[dev-packages]
-sphinx = "*"
-sphinx-rtd-theme = "*"
+name = "pypi"
 
 [packages]
-pandas = "*"
-click = "*"
-scikit-learn = "*"
-requests = "*"
 alphabet-detector = "==0.0.7"
-jellyfish = "*"
+click = "==7.1.2"
+jellyfish = "==0.7.2"
 langdetect = "==1.0.8"
 nltk = "==3.5"
-numpy = "==1.18.3"
+text-unidecode = "==1.3"
+tqdm = "==4.45.0"
+pyproj = "==2.6.1.post1"
+Shapely = "==1.7.0"
+pyxDamerauLevenshtein = "*"
+pandas = "*"
 pycountry-convert = "==0.7.2"
 pycountry = "==19.8.18"
-scipy = "==1.4.1"
-text-unidecode = "*"
-tqdm = "==4.45.0"
-xgboost = "==1.0.2"
-Shapely = "*"
+scikit-learn = "*"
+scipy = "*"
 Rtree = "*"
-pyproj = "*"
+xgboost = "*"
+requests = "*"
 beautifultable = "*"
-pyxdameraulevenshtein = "*"
+
+[dev-packages]
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"
