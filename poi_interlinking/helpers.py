@@ -4,6 +4,9 @@
 
 import os
 import re
+
+import numpy as np
+import pandas as pd
 from text_unidecode import unidecode
 import unicodedata
 import __main__
@@ -12,6 +15,7 @@ from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 import pycountry
 from langdetect import detect, lang_detect_exception
+import multiprocessing as mp
 
 from poi_interlinking import config
 from poi_interlinking.processing import sim_measures
@@ -148,6 +152,49 @@ def normalize_str(s, lang_detect=False):
 
 def getBasePath():
     return os.path.abspath(os.path.dirname(__main__.__file__))
+
+
+def fun(f, q_in, q_out):
+    while True:
+        i, x = q_in.get()
+        if i is None:
+            break
+        q_out.put((i, f(*x)))
+
+
+def parmap(f, X, nprocs=min(config.n_cores, mp.cpu_count() - 1)):
+    q_in = mp.Queue(1)
+    q_out = mp.Queue()
+
+    proc = [mp.Process(target=fun, args=(f, q_in, q_out)) for _ in range(nprocs)]
+    for p in proc:
+        p.daemon = True
+        p.start()
+
+    sent = [q_in.put((i, x)) for i, x in enumerate(X)]
+    [q_in.put((None, None)) for _ in range(nprocs)]
+    res = [q_out.get() for _ in range(len(sent))]
+
+    [p.join() for p in proc]
+
+    return [x for i, x in sorted(res)]
+
+
+def _apply_df(args):
+    df, func, num, kwargs = args
+    return num, df.progress_apply(func, **kwargs)
+
+
+def apply_df_by_multiprocessing(df, func, workers=min(config.n_cores, mp.cpu_count() - 1), **kwargs):
+    # workers = kwargs.pop('workers')
+    pool = mp.Pool(processes=workers)
+    result = pool.imap(_apply_df, [(d, func, i, kwargs) for i, d in enumerate(np.array_split(df, workers))])
+
+    pool.close()
+    pool.join()
+
+    result = sorted(result, key=lambda x: x[0])
+    return pd.concat([i[1] for i in result])
 
 
 class Printing:

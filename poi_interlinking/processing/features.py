@@ -6,10 +6,11 @@ from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import re
+
 from sklearn import preprocessing
 
 from poi_interlinking import config
-from poi_interlinking.helpers import transform, StaticValues
+from poi_interlinking.helpers import transform, StaticValues, apply_df_by_multiprocessing, parmap
 from poi_interlinking.processing import sim_measures
 from poi_interlinking.processing.spatial.matching import get_distance, Projection
 
@@ -86,49 +87,66 @@ class Features:
         # y = self.data_df[config.use_cols['status']].str.upper().map(self.d).values
         y = self.data_df[config.use_cols['status']].to_numpy()
 
+        fX0 = np.zeros(y[:, np.newaxis].shape)  # holds street numbers diff
+        fX3 = np.zeros(y[:, np.newaxis].shape)  # holds coords diff
+
         print('Extracting street numbers from addresses...')
-        self.data_df = self.data_df.progress_apply(self._split_address, axis=1)
+        # self.data_df = self.data_df.progress_apply(self._split_address, axis=1)
+        self.data_df = apply_df_by_multiprocessing(self.data_df, self._split_address, axis=1)
 
         print('Compute arithmetic features...')
-        fX0 = self.data_df.progress_apply(
-            lambda x: self.arithmetic_features(x['str_no1'], x['str_no2']), axis=1).to_numpy()
-        fX2 = np.asarray(list(tqdm(
-            map(self._compute_basic_features, self.data_df['str_name1'], self.data_df['str_name2']),
-            total=len(self.data_df.index)
-        )), dtype=float)
+        if self.clf_method.lower() == 'lgm':
+            fX0 = self.data_df.progress_apply(
+                lambda x: self.arithmetic_features(x['str_no1'], x['str_no2']), axis=1).to_numpy()[:, np.newaxis]
+
+        ## apply approx string similarities on addresses
+        # fX2 = np.asarray(list(tqdm(
+        #     map(self._compute_basic_features, self.data_df['str_name1'], self.data_df['str_name2']),
+        #     total=len(self.data_df.index)
+        # )), dtype=float)
+        fX2 = np.asarray(
+            parmap(
+                self._compute_basic_features,
+                tqdm(
+                    zip(self.data_df['str_name1'].to_numpy(), self.data_df['str_name2'].to_numpy()),
+                    total=len(self.data_df.index))
+            ), dtype=float)
 
         print(f'Computing features of the {self.clf_method.lower()} group...')
         if self.clf_method.lower() == 'basic':
-            fX1 = np.asarray(list(tqdm(
-                map(self._compute_basic_features,
-                    self.data_df[config.use_cols['s1']],
-                    self.data_df[config.use_cols['s2']]),
-                total=len(self.data_df.index)
-            )), dtype=float)
-            # fX2 = np.asarray(list(tqdm(
-            #     map(self._compute_basic_features, self.data_df['str_name1'], self.data_df['str_name2']),
-            #     total=len(self.data_df.index)
-            # )), dtype=float)
+            fX1 = np.asarray(
+                parmap(
+                    self._compute_basic_features,
+                    tqdm(
+                        zip(self.data_df[config.use_cols['s1']].to_numpy(),
+                            self.data_df[config.use_cols['s2']].to_numpy()),
+                        total=len(self.data_df.index))
+                ), dtype=float)
         elif self.clf_method.lower() == 'basic_sorted':
-            fX1 = list(tqdm(
-                map(self._compute_sorted_features,
-                    self.data_df[config.use_cols['s1']],
-                    self.data_df[config.use_cols['s2']]),
-                total=len(self.data_df.index)
-            ))
-            # fX2 = list(tqdm(
-            #     map(self._compute_sorted_features, self.data_df['str_name1'], self.data_df['str_name2']),
+            fX1 = np.asarray(
+                parmap(
+                    self._compute_sorted_features,
+                    tqdm(
+                        zip(self.data_df[config.use_cols['s1']].to_numpy(),
+                            self.data_df[config.use_cols['s2']].to_numpy()),
+                        total=len(self.data_df.index))
+                ), dtype=float)
+        else:  # lgm
+            # fX1 = list(tqdm(
+            #     map(self.compute_features, self.data_df[config.use_cols['s1']], self.data_df[config.use_cols['s2']]),
             #     total=len(self.data_df.index)
             # ))
-        else:  # lgm
-            fX1 = list(tqdm(
-                map(self.compute_features, self.data_df[config.use_cols['s1']], self.data_df[config.use_cols['s2']]),
-                total=len(self.data_df.index)
-            ))
             # fX2 = list(tqdm(
             #     map(self.compute_features, self.data_df['str_name1'], self.data_df['str_name2']),
             #     total=len(self.data_df.index)
             # ))
+            fX1 = np.asarray(
+                parmap(
+                    self.compute_features,
+                    tqdm(
+                        zip(self.data_df[config.use_cols['s1']].to_numpy(), self.data_df[config.use_cols['s2']].to_numpy()),
+                        total=len(self.data_df.index))
+                ), dtype=float)
 
         if all(x in config.use_cols.values() for x in ['lon1', 'lat1', 'lon2', 'lat2']):
             # spatial features
@@ -148,10 +166,9 @@ class Features:
                 )), dtype=float)
         else:
             print('Coords are not provided')
-            fX3 = np.zeros(fX0[:, np.newaxis].shape)
 
         # normalize values
-        fX0 = preprocessing.MinMaxScaler().fit_transform(fX0[:, np.newaxis])
+        fX0 = preprocessing.MinMaxScaler().fit_transform(fX0)
         fX3 = preprocessing.MinMaxScaler().fit_transform(fX3)
 
         fX = np.concatenate((fX0, fX2, fX1, fX3), axis=1)
