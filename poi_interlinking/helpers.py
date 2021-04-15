@@ -309,5 +309,5 @@ class StaticValues:
             # self.final_cols += self.spatial_feature_cols
             if config.all_cols: self.final_cols += self.extra_feature_cols
         else:  # basic or whatever
-            self.final_cols = self.address_feature_cols + self.sim_features_cols  # + self.spatial_feature_cols
+            self.final_cols = self.address_feature_cols + self.sim_features_cols + self.spatial_feature_cols
             if config.all_cols: self.final_cols += self.extra_feature_cols
