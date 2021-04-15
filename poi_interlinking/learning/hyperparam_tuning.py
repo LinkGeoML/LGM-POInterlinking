@@ -46,7 +46,7 @@ class ParamTuning:
         self.outer_cv = StratifiedKFold(n_splits=max(config.MLConf.kfold_no, 5), shuffle=False)
 
         self.kfold = config.MLConf.kfold_no
-        self.n_jobs = config.MLConf.n_jobs
+        self.n_jobs = config.n_cores
 
         self.search_method = config.MLConf.hyperparams_search_method
         self.n_iter = config.MLConf.max_iter
@@ -166,7 +166,7 @@ class ParamTuning:
         classifier object
             It returns a trained classifier.
         """
-        if hasattr(model, "n_jobs"): model.set_params(n_jobs=config.MLConf.n_jobs)
+        if hasattr(model, "n_jobs"): model.set_params(n_jobs=config.n_cores)
 
         model.fit(X_train, y_train)
         return model
