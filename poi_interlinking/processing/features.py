@@ -88,6 +88,7 @@ class Features:
         y = self.data_df[config.use_cols['status']].to_numpy()
 
         fX0 = np.zeros(y[:, np.newaxis].shape)  # holds street numbers diff
+        fX2 = np.zeros((y.shape[0], len([k for k, v in StaticValues.sim_metrics.items() if 'basic' in v])))
         fX3 = np.zeros(y[:, np.newaxis].shape)  # holds coords diff
 
         print('Extracting street numbers from addresses...')
@@ -98,19 +99,6 @@ class Features:
         if self.clf_method.lower() == 'lgm':
             fX0 = self.data_df.progress_apply(
                 lambda x: self.arithmetic_features(x['str_no1'], x['str_no2']), axis=1).to_numpy()[:, np.newaxis]
-
-        ## apply approx string similarities on addresses
-        # fX2 = np.asarray(list(tqdm(
-        #     map(self._compute_basic_features, self.data_df['str_name1'], self.data_df['str_name2']),
-        #     total=len(self.data_df.index)
-        # )), dtype=float)
-        fX2 = np.asarray(
-            parmap(
-                self._compute_basic_features,
-                tqdm(
-                    zip(self.data_df['str_name1'].to_numpy(), self.data_df['str_name2'].to_numpy()),
-                    total=len(self.data_df.index))
-            ), dtype=float)
 
         print(f'Computing features of the {self.clf_method.lower()} group...')
         if self.clf_method.lower() == 'basic':
@@ -132,6 +120,20 @@ class Features:
                         total=len(self.data_df.index))
                 ), dtype=float)
         else:  # lgm
+            ## apply approx string similarities on addresses
+            # fX2 = np.asarray(list(tqdm(
+            #     map(self._compute_basic_features, self.data_df['str_name1'], self.data_df['str_name2']),
+            #     total=len(self.data_df.index)
+            # )), dtype=float)
+            fX2 = np.asarray(
+                parmap(
+                    self._compute_basic_features,
+                    tqdm(
+                        zip(self.data_df['str_name1'].to_numpy(), self.data_df['str_name2'].to_numpy()),
+                        total=len(self.data_df.index))
+                ), dtype=float)
+
+
             # fX1 = list(tqdm(
             #     map(self.compute_features, self.data_df[config.use_cols['s1']], self.data_df[config.use_cols['s2']]),
             #     total=len(self.data_df.index)
