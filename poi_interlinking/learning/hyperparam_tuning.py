@@ -195,12 +195,12 @@ class ParamTuning:
         # acc = accuracy_score(y_test, y_pred)
         metrics['Accuracy'] = balanced_accuracy_score(y_test, y_pred)
         metrics['Precision'] = precision_score(y_test, y_pred)
-        metrics['Precision_weighted'] = precision_score(y_test, y_pred, average='weighted')
+        metrics['mPrecision'] = precision_score(y_test, y_pred, average='macro')
         metrics['Recall'] = recall_score(y_test, y_pred)
-        metrics['Recall_weighted'] = recall_score(y_test, y_pred, average='weighted')
+        metrics['mRecall'] = recall_score(y_test, y_pred, average='macro')
         metrics['F1_score'] = f1_score(y_test, y_pred)
-        metrics['F1_score_weighted'] = f1_score(y_test, y_pred, average='weighted')
-        metrics['roc_auc'] = roc_auc_score(y_test, y_pred)
-        metrics['roc_auc_weighted'] = roc_auc_score(y_test, y_pred, average='weighted')
+        metrics['mF1_score'] = f1_score(y_test, y_pred, average='macro')
+        metrics['Roc_auc'] = roc_auc_score(y_test, y_pred)
+        metrics['mRoc_auc'] = roc_auc_score(y_test, y_pred, average='macro')
 
         return metrics
