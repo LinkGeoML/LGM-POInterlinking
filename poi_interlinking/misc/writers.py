@@ -22,6 +22,10 @@ def save_features(fpath, data, delimiter=',', cols=None):
     )
 
 
+def without_keys(d, keys):
+    return {x: d[x] for x in d if x not in keys}
+
+
 def write_results(fpath, results, delimiter='&'):
     """
     Writes full and averaged experiment results.
@@ -34,6 +38,7 @@ def write_results(fpath, results, delimiter='&'):
     file_exists = True
     if not os.path.exists(fpath): file_exists = False
 
+    results = without_keys(results, 'fimportances')
     with open(fpath, 'a+') as file:
         writer = csv.writer(file, delimiter=delimiter)
         if not file_exists:

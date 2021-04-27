@@ -208,7 +208,7 @@ class Printing:
         'F1-Score': 'F1_score',
         'F1-std': 'F1_score_std',
         # 'F1-weighted': 'F1_score_weighted',
-        'Roc-AUC': 'roc_auc',
+        'Roc-AUC': 'Roc_auc',
         # 'ROC-AUC-weighted': 'roc_auc_weighted',
         'Time (sec)': 'time'
     }
