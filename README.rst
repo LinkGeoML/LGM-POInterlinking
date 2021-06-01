@@ -16,7 +16,7 @@ are used in various classification models to address the POI interlinking proble
 learning workflow that involves the grid-search and cross-validation functionality, based on the `scikit-learn <https
 ://scikit-learn.org/>`_ toolkit, to optimize and optimally fit each examined model to the data at hand.
 
-The source code was tested using Python 3 (>=3.6) and Scikit-Learn 0.22.2.post1 on a Linux server.
+The source code was tested using Python 3 (>=3.7) and Scikit-Learn 0.23.1 on a Linux server.
 
 Setup procedure
 ---------------

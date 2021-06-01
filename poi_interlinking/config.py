@@ -8,6 +8,8 @@ from scipy.stats import randint as sp_randint, expon, truncnorm
 default_data_path = 'data'
 freq_term_size = 400
 
+n_cores = 2  #: int: Number of parallel jobs to be initiated. -1 means to utilize all available processors.
+
 # fieldnames = ["s1", "s2", "status", "c1", "c2", "a1", "a2", "cc1", "cc2"]
 fieldnames = None
 use_cols = dict(
@@ -36,7 +38,7 @@ delimiter = ','
 sort_thres = 0.55
 
 #: int: Seed used by each of the random number generators.
-seed_no = 13
+seed_no = 2020
 
 test_size = 0.2
 
@@ -75,14 +77,9 @@ class MLConf:
     :vartype XGBoost_hyperparameters_dist: :obj:`dict`
     """
 
-    kfold_no = 1
+    kfold_no = 5
     """int: The number of outer folds that splits the dataset for the k-fold cross-validation.
     """
-
-    #: int: The number of inner folds that splits the dataset for the k-fold cross-validation.
-    kfold_inner_parameter = 4
-
-    n_jobs = 2  #: int: Number of parallel jobs to be initiated. -1 means to utilize all available processors.
 
     classification_method = 'lgm'
     """str: The classification group of features to use. (*basic* | *basic_sorted* | *lgm*).
@@ -103,7 +100,7 @@ class MLConf:
     """
     #: int: Number of iterations that RandomizedSearchCV should execute. It applies only when
     #: :attr:`hyperparams_search_method` equals to 'randomized'.
-    max_iter = 300
+    max_iter = 200
 
     #: int: Number of ranked features to print
     max_features_to_show = 10
@@ -156,7 +153,7 @@ class MLConf:
             # best
             'class_weight': 'balanced', 'criterion': 'entropy', 'max_depth': 148, 'max_features': 'sqrt',
             'min_samples_leaf': 4, 'n_estimators': 421,
-            'random_state': seed_no, 'n_jobs': n_jobs,  # 'oob_score': True,
+            'random_state': seed_no, 'n_jobs': n_cores,  # 'oob_score': True,
         },
         'ExtraTrees': {
             # default
@@ -164,14 +161,14 @@ class MLConf:
             # best
             'class_weight': {0: 1, 1: 3}, 'criterion': 'entropy', 'max_depth': 1200, 'max_features': 'sqrt',
             'min_samples_split': 8, 'n_estimators': 10,
-            'random_state': seed_no, 'n_jobs': n_jobs
+            'random_state': seed_no, 'n_jobs': n_cores
         },
         'XGBoost': {
             # default
             # 'n_estimators': 3000,
             # best
             'max_delta_step': 2, 'max_depth': 5, 'n_estimators': 15, 'subsample': 0.5,
-            'seed': seed_no, 'nthread': n_jobs
+            'seed': seed_no, 'nthread': n_cores, 'eval_metric': 'logloss'
         },
         'MLP': {
             # default
@@ -237,7 +234,7 @@ class MLConf:
             'degree': [1, 2, 3],
             'gamma': ['scale', 'auto'],
             'C': [0.01, 0.1, 1, 10, 25, 50, 100],
-            'max_iter': [30000],
+            'max_iter': [50000],
             'class_weight': ['balanced', {0: 1, 1: 3}, {0: 1, 1: 5}],
             'probability': True
         },
@@ -275,6 +272,8 @@ class MLConf:
         # 'min_child_weight': [1, 5, 10],
         # 'scale_pos_weight': [1, 2, 3, 5],
         'max_delta_step': [1, 2, 3, 5],
+        "use_label_encoder": [False],
+        "eval_metric": ["logloss"]
     }
     MLP_hyperparameters = {
         'hidden_layer_sizes': [(100,), (50, 50,)],
@@ -324,6 +323,8 @@ class MLConf:
         'max_delta_step': sp_randint(1, 5),
         "reg_alpha": truncnorm(0, 2),
         'reg_lambda': sp_randint(1, 20),
+        "use_label_encoder": [False],
+        "eval_metric": ["error", "logloss"]
     }
     MLP_hyperparameters_dist = {
         'hidden_layer_sizes': [(100,), (50, 50,)],
@@ -333,12 +334,3 @@ class MLConf:
         'activation': ['identity', 'logistic', 'tanh', 'relu'],
         'tol': [1e-3, 1e-4],
     }
-
-    # RandomForest_hyperparameters_hp = {
-    #     'max_depth': hp.choice('max_depth', range(1,20)),
-    #     'max_features': hp.choice('max_features', range(1,150)),
-    #     'n_estimators': hp.choice('n_estimators', range(100,500)),
-    #     'criterion': hp.choice('criterion', ["gini", "entropy"])
-    # }
-    #
-    # bayes_class_weight = ['balanced'] + [{0: 1, 1: w} for w in range(2, 5)]
